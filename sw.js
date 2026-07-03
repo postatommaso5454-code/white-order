@@ -1,4 +1,4 @@
-const CACHE_NAME = 'white-order-pwa-v3-mobile-fixed';
+const CACHE_NAME = 'white-order-pwa-v4-auto-fees-recents';
 const APP_SHELL = [
   './',
   './index.html',
