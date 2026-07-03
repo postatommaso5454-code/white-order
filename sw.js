@@ -1,4 +1,4 @@
-const CACHE_NAME = 'white-order-pwa-v2-whitebakery-iphone';
+const CACHE_NAME = 'white-order-pwa-v3-mobile-fixed';
 const APP_SHELL = [
   './',
   './index.html',
