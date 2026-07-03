@@ -151,13 +151,15 @@
 
       .topbar {
         top: 6px;
-        grid-template-columns: minmax(84px, 96px) minmax(0, 1fr) auto;
+        grid-template-columns: minmax(92px, 112px) 1fr;
         grid-template-areas:
-          "table search actions";
+          "table actions"
+          "search search";
         gap: 7px;
         padding: 8px;
         border-radius: 20px;
       }
+      .top-actions { justify-self: end; }
       .table-input { grid-area: table; }
       .search { grid-area: search; min-width: 0; }
       .top-actions { grid-area: actions; gap: 6px; }
@@ -250,7 +252,7 @@
       .top-actions .icon-btn { width: 44px; min-height: 44px; }
       .table-input { font-size: 15px; padding: 0 9px; }
       .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .product { min-height: 88px; }
+      .product { min-height: 96px; }
       .product-name { font-size: 14px; }
       .bottom-nav button { font-size: 12px; }
     }
@@ -372,7 +374,7 @@
 
   <script>
     const CATEGORIES = [
-      'Daily Brunch','American Breakfast','Specialities','Salad','Club & Sandwich','Hot Dog','Bagel & Wrap','NY Burger','Kids Menu','Pancake & Waffle','Sweet & Co.','Cakes & Pies','Yogurt','Milkshake & Smoothies','Iced Cappuccino / Choco','Caffetteria, tè e fresh drinks','Sodas / Acqua / Succhi','Sides','Alcolico'
+      'Best Seller','Novità','All Days Brunch','American Breakfast','Specialities','Club & Sandwich','Sides','Salad','Pancake & Waffle','Cake & Cheesecake','Hot Dog','Sweet & Co.','Milkshake & Sundae','Kids Menu','Smoothie','Fresh Drinks','Tea & Infusi','Yogurt','Caffetteria','Iced Cappuccino','NY Burger'
     ];
 
     const COMMON = {
@@ -390,6 +392,28 @@
           { name: "All'occhio di bue", price: 0 }
         ]
       },
+      brunchChoice: {
+        id: 'brunchChoice', title: 'Scelta dolce inclusa', required: false, multiple: false,
+        options: [
+          { name: 'Pancake + yogurt bianco/muesli/frutta/sciroppo', price: 0 },
+          { name: 'Pancake con frutta fresca e sciroppo', price: 0 }
+        ]
+      },
+      nutellaExtra: {
+        id: 'nutellaExtra', title: 'Extra', required: false, multiple: true,
+        options: [{ name: 'Nutella', price: 2 }]
+      },
+      americanClassicExtras: {
+        id: 'americanClassicExtras', title: 'Extra', required: false, multiple: true,
+        options: [{ name: 'Prosciutto cotto', price: 2 }, { name: 'Wurstel', price: 2 }]
+      },
+      pancakeExtras: {
+        id: 'pancakeExtras', title: 'Provalo con', required: false, multiple: true,
+        options: [
+          { name: "Succo d'arancia", price: 1.5 },
+          { name: 'Iced cappuccino/choco', price: 2 }
+        ]
+      },
       kidsDrink: {
         id: 'kidsDrink', title: 'Bevanda Kids Menu', required: true, multiple: false,
         options: [
@@ -398,157 +422,163 @@
           { name: 'Coca-Cola in lattina', price: 1 }
         ]
       },
-      pancakeExtras: {
-        id: 'pancakeExtras', title: 'Extra colazione', required: false, multiple: true,
-        options: [
-          { name: "Succo d'arancia", price: 1.5 },
-          { name: 'Iced cappuccino/choco', price: 2 }
-        ]
+      pulledPorkExtra: {
+        id: 'pulledPorkExtra', title: 'Provalo con', required: false, multiple: true,
+        options: [{ name: 'Pulled Pork BBQ Home Made', price: 3 }]
       },
       coconutMilk: {
         id: 'coconutMilk', title: 'Extra', required: false, multiple: true,
-        options: [ { name: 'Latte di cocco', price: 1 } ]
+        options: [{ name: 'Latte di cocco', price: 1 }]
       },
       burgerBeer: {
-        id: 'burgerBeer', title: 'Abbinamento', required: false, multiple: true,
-        options: [ { name: 'Budweiser alla spina 0,25', price: 3.5 } ]
+        id: 'burgerBeer', title: 'Provalo con', required: false, multiple: true,
+        options: [{ name: 'Birra alla spina Budweiser 0,25', price: 3.5 }]
       },
       veggieExtras: {
-        id: 'veggieExtras', title: 'Extra Veggie', required: false, multiple: true,
-        options: [
-          { name: 'French fries', price: 1.5 },
-          { name: 'Onion rings', price: 1.5 }
-        ]
+        id: 'veggieExtras', title: 'Provalo con', required: false, multiple: true,
+        options: [{ name: 'French fries', price: 1.5 }, { name: 'Onion rings', price: 1.5 }]
       },
       yogurtGreek: {
-        id: 'yogurtGreek', title: 'Variante', required: false, multiple: false,
-        options: [ { name: 'Yogurt greco', price: 1 } ]
+        id: 'yogurtGreek', title: 'Provalo con', required: false, multiple: false,
+        options: [{ name: 'Yogurt greco', price: 1 }]
       },
-      yogurtGreekRice: {
-        id: 'yogurtGreekRice', title: 'Variante', required: false, multiple: false,
-        options: [ { name: 'Yogurt greco', price: 1.5 } ]
+      sodaSize: {
+        id: 'sodaSize', title: 'Formato', required: true, multiple: false,
+        options: [{ name: 'Coca Cola piccola', price: 3 }, { name: 'Coca Cola grande', price: 4 }]
+      },
+      icedTeaFlavor: {
+        id: 'icedTeaFlavor', title: 'Gusto', required: true, multiple: false,
+        options: [{ name: 'Passion Fruit', price: 0 }, { name: 'Lime', price: 0 }, { name: 'Peach', price: 0 }]
+      },
+      brainFuelMilk: {
+        id: 'brainFuelMilk', title: 'Base', required: false, multiple: false,
+        options: [
+          { name: 'Plain acqua', price: 0 },
+          { name: 'Latte vaccino', price: 0 },
+          { name: 'Latte senza lattosio', price: 0 },
+          { name: 'Latte di soia', price: 0 },
+          { name: 'Latte di cocco', price: 0 }
+        ]
+      },
+      avoVariant: {
+        id: 'avoVariant', title: 'Variante', required: true, multiple: false,
+        options: [{ name: 'Avo Lox', price: 0 }, { name: 'Avo Green', price: 0 }]
+      },
+      clubVariant: {
+        id: 'clubVariant', title: 'Variante', required: false, multiple: false,
+        options: [{ name: 'Classico', price: 0 }, { name: 'Con pollo alla piastra', price: 0 }]
       }
     };
 
     const MENU = [
-      item('Mama\'s Breakfast','Daily Brunch',10.90,"Uova, bacon, toast, pancake, yogurt, Nutella. Compreso succo o americano.",[COMMON.eggs, COMMON.drinkIncluded]),
-      item('English Breakfast','Daily Brunch',10.90,"Uova, funghi, pomodoro, avocado, hummus, pancake. Compreso succo o americano.",[COMMON.eggs, COMMON.drinkIncluded]),
-      item('Ocean Breakfast','Daily Brunch',10.90,"Omelette al salmone, ranch, insalata, mango, pancake. Compreso succo o americano.",[COMMON.drinkIncluded]),
+      item('Mama\'s Breakfast','Best Seller',12.90,"Uova strapazzate o occhio di bue, bacon, pane tostato, burro, marmellata, pancake/yogurt. Bevanda inclusa.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('Club Sandwich','Best Seller',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.',[COMMON.clubVariant]),
+      item('Pancake Nutella','Best Seller',5.90,'Pancake con Nutella.',[COMMON.pancakeExtras]),
+      item('Cheesecake Strawberry','Best Seller',5.50,'Cheesecake alla fragola.'),
 
-      item('Big Brooklin Breakfast','American Breakfast',11.90,"Uova strapazzate, bacon, burro, pancake, sciroppo. Compreso succo o americano.",[COMMON.drinkIncluded]),
-      item('American Breakfast Classic','American Breakfast',9.90,"Uova, pane ai cereali, bacon, burro, confettura. Compreso succo o americano.",[COMMON.eggs, COMMON.drinkIncluded, { id:'americanClassicExtras', title:'Extra', required:false, multiple:true, options:[{name:'Prosciutto cotto', price:2},{name:'Wurstel', price:2}] }]),
-      item('Eggs Benedict Lox','American Breakfast',11.90,"Buttermilk, uova pochè, salmone, salsa olandese, pepe rosa. Compreso succo o americano.",[COMMON.drinkIncluded]),
-      item('Eggs Benedict Ham','American Breakfast',9.90,"Buttermilk, uova pochè, prosciutto cotto, salsa olandese, pepe rosa. Compreso succo o americano.",[COMMON.drinkIncluded]),
+      item('House BBQ Ribs','Novità',16.90,'Costine di maiale cotte 24 ore, salsa BBQ, ziggy fries e ranch salad.'),
+      item('Pulled Pork Burger','Novità',14.90,'Pulled Pork BBQ Home Made, burger, formaggio, lattuga, pomodori, french fries.'),
+      item('Bacon Cheese Dog','Novità',9.50,'Würstel italiano, formaggio filante, erba cipollina, bacon, french fries.',[COMMON.pulledPorkExtra]),
+      item('House Dog','Novità',7.90,'Würstel italiano con paprika e macis, french fries.',[COMMON.pulledPorkExtra]),
 
-      item('House BBQ Ribs','Specialities',16.90,'Costine di maiale cotte lentamente e glassate BBQ.'),
-      item('Rice Chicken Thai','Specialities',12.90,'Riso basmati, pollo teriyaki, verdure, sesamo, arachidi e mandorle.'),
-      item('Double Bacon Poutine','Specialities',10.90,'French fries, bacon, wurstel, formaggio filante e BBQ.'),
-      item('Schnitzel Steak','Specialities',13.50,'Cotoletta/schnitzel con contorno.'),
-      item('Panko Chicken Nuggets','Specialities',10.99,'Nuggets panko, salsa barbecue e ranch.'),
-      item('Brisket Poutine','Specialities',11.90,'French fries, brisket, cipolle caramellate, formaggio, BBQ.'),
-      item('Hawaian Curry Chicken & Rice','Specialities',12.99,'Pollo curry cocco, verdure, riso basmati, noccioline.'),
+      item('Mama\'s Breakfast','All Days Brunch',12.90,"Uova, bacon, toast, burro, marmellata, pancake/yogurt. Compreso succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('English Breakfast','All Days Brunch',12.90,"Uova, fungo e pomodoro, pane ai cereali, spinaci, avocado, hummus yogurt greco, pancake/yogurt. Bevanda inclusa.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('Club Sandwich Special','All Days Brunch',15.90,'Club sandwich + Coca alla spina 0,3 o birra alla spina 0,2 + mezza fetta di Nutella cake.',[{id:'specialDrink', title:'Bevanda inclusa', required:true, multiple:false, options:[{name:'Coca alla spina 0,3',price:0},{name:'Birra alla spina 0,2',price:0}]}]),
+      item('Ocean Breakfast','All Days Brunch',12.90,"Omelette salmone, ranch, insalata, mango, pane cereali, white vinaigrette, pancake/yogurt. Bevanda inclusa.",[COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
 
-      item('Lox Salad','Salad',15.30,'Lattuga, rucola, salmone, mango, avocado, sesamo, vinaigrette.'),
-      item('Chicken Caesar','Salad',13.00,'Lattuga, pollo, grana, ranch dressing, pane tostato.'),
-      item('Classic Caesar','Salad',6.80,'Lattuga, grana, ranch dressing, bagel ai cereali tostato.'),
+      item('Big Brooklin Breakfast','American Breakfast',11.90,"Uova strapazzate, bacon, burro e pancake con sciroppo d'acero. Bevanda inclusa.",[COMMON.drinkIncluded]),
+      item('American Breakfast Classic','American Breakfast',9.90,"Uova strapazzate o occhio di bue, pane cereali, bacon, burro, confettura. Bevanda inclusa.",[COMMON.eggs, COMMON.drinkIncluded, COMMON.americanClassicExtras]),
+      item('Eggs Benedict Lox','American Breakfast',11.90,"Buttermilk, uova pochè, salmone Premium Mowi, salsa olandese, pepe rosa. Bevanda inclusa.",[COMMON.drinkIncluded]),
+      item('Eggs Benedict Ham','American Breakfast',9.90,"Buttermilk, uova pochè, prosciutto cotto, salsa olandese, pepe rosa. Bevanda inclusa.",[COMMON.drinkIncluded]),
 
-      item('Avocado Toast','Club & Sandwich',10.90,'Avo Lox o Avo Green.',[{ id:'avoVariant', title:'Variante', required:true, multiple:false, options:[{name:'Avo Lox', price:0},{name:'Avo Green', price:0}] }]),
-      item('Club Sandwich','Club & Sandwich',11.90,'Pane ai cereali, bacon, tacchino, uova, lattuga, pomodori, ranch.'),
-      item('Cheese Toast','Club & Sandwich',7.50,'Pane sandwich, prosciutto cotto, doppio formaggio.'),
-      item('Ruben Sandwich','Club & Sandwich',13.90,'Brisket, bacon, cheddar, patatine.'),
-      item('Croque Madame','Club & Sandwich',12.90,'Prosciutto cotto, mozzarella, spinaci, uovo, maionese.'),
+      item('House BBQ Ribs','Specialities',16.90,'Costine di maiale cotte 24 ore, salsa BBQ, ziggy fries e ranch salad.'),
+      item('Rice Chicken Thai','Specialities',12.90,'Riso basmati curcuma, pollo teriyaki zenzero/lime, verdure, sesamo, arachidi, mandorle.'),
+      item('Double Bacon Poutine','Specialities',10.90,'Doppio bacon crispy, french fries, formaggio filante, salsa BBQ.',[COMMON.pulledPorkExtra]),
+      item('Schnitzel Steak','Specialities',13.50,'Cotoletta di maiale in panatura croccante, french fries, salsa BBQ, maionese.'),
 
-      item('House Dog','Hot Dog',8.90,'Wurstel 100% carne italiana, paprika, macis, french fries.'),
+      item('Avocado Toast','Club & Sandwich',10.90,'Avo Lox o Avo Green.',[COMMON.avoVariant]),
+      item('Club Sandwich','Club & Sandwich',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.',[COMMON.clubVariant]),
+      item('Veggie Club Sandwich','Club & Sandwich',9.90,'Pane ai cereali, avocado, zucchine grigliate, uova strapazzate, lattuga, pomodori, ranch dressing.'),
+      item('Long Beach','Club & Sandwich',8.90,'Tortilla di grano, pollo marinato, formaggio spalmabile, lattuga, avocado, pomodoro.'),
 
-      item('New Bagel Lox','Bagel & Wrap',11.90,'Bagel multigrain, salmone, formaggio alle erbe, spinaci.'),
-      item('Long Beach','Bagel & Wrap',8.90,'Tortilla, pollo marinato, formaggio spalmabile, lattuga, avocado, pomodoro.'),
-      item('Bagel Lox','Bagel & Wrap',13.10,'Bagel integrale, salmone, formaggio spalmabile, spinaci.'),
+      item('French Fries','Sides',4.50,'Patatine fritte.'),
+      item('Onion Rings','Sides',3.50,'Anelli di cipolla pastellati.'),
 
-      item('Crispy Burger','NY Burger',14.90,'Burger, formaggio, bacon, lattuga, pomodori, french fries.'),
-      item('Cheeseburger','NY Burger',13.90,'Burger, formaggio, lattuga, pomodori, french fries.',[COMMON.burgerBeer]),
-      item('Basic Burger','NY Burger',12.90,'Burger, lattuga, pomodori, french fries.',[COMMON.burgerBeer]),
-      item('Veggie Burger','NY Burger',10.90,'Burger di patate, rucola, pomodori, mozzarella, avocado, zucchine, ranch.',[COMMON.veggieExtras]),
-      item('Pulled Pork Burger','NY Burger',16.90,'Pulled pork burger.'),
-
-      item('Baby Burger Menu','Kids Menu',10.90,'Baby burger, fries, pancakes, Nutella, acqua o succo. Coca +1€.',[COMMON.kidsDrink]),
-      item('Baby Toast Menu','Kids Menu',10.90,'Baby toast prosciutto e formaggio, fries, pancakes, Nutella, acqua o succo. Coca +1€.',[COMMON.kidsDrink]),
-      item('Baby Corn Dog Menu','Kids Menu',10.90,'2 baby corn dog, fries, pancakes, Nutella, acqua o succo. Coca +1€.',[COMMON.kidsDrink]),
+      item('Lox Salad','Salad',13.90,'Lattuga, rucola, salmone affumicato Premium Mowi, mango, avocado, sesamo, white vinaigrette, pane tostato.'),
+      item('Chicken Caesar','Salad',11.90,'Lattuga, pollo marinato, grana, ranch dressing, white vinaigrette, pomodorini, pane tostato.'),
+      item('Daily Market Salad','Salad',8.90,'Bagel sesamo, hummus ceci, insalata, carote, zucchine, pomodori, mais, rucola, mela verde, fragole, mandorle, maionese vegana.'),
+      item('Bretzel Club Salad','Salad',11.50,'Lattuga, tacchino arrosto, bacon crispy, uova strapazzate, pomodorini, perle di bretzel, ranch, white vinaigrette.'),
 
       item('Pancake Basic','Pancake & Waffle',5.00,'Pancake classici.',[COMMON.pancakeExtras]),
       item('Pancake Nutella','Pancake & Waffle',5.90,'Pancake con Nutella.',[COMMON.pancakeExtras]),
       item('Pancake Fruit','Pancake & Waffle',6.90,'Fragole, banane, mirtilli.',[COMMON.pancakeExtras]),
-      item('Pancake Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.'),
-      item('Pancake Ice Cream Fruit Sandwich','Pancake & Waffle',7.90,'Gelato fiordilatte, frutta, topping fragola, rice krispies.'),
-      item('Pancake Apple & Cinnamon','Pancake & Waffle',5.90,'Mele e salsa alla cannella.'),
-      item('Waffle Basic','Pancake & Waffle',5.00,'Waffle classico.',[COMMON.pancakeExtras]),
-      item('Waffle Nutella','Pancake & Waffle',5.90,'Waffle con Nutella.',[COMMON.pancakeExtras]),
-      item('Waffle Fruit','Pancake & Waffle',6.90,'Fragole, banane, mirtilli.'),
-      item('Waffle Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.'),
-      item('Waffle Ice Cream Fruit Sandwich','Pancake & Waffle',7.90,'Gelato fiordilatte, frutta, sciroppo d’acero, rice krispies, panna.'),
-      item('Preparato Pancake','Pancake & Waffle',7.90,'Preparato fresco pronto da cuocere.'),
+      item('Pancake Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.',[COMMON.pancakeExtras]),
 
-      item('Muffin Nutella','Sweet & Co.',3.90,'Muffin con cuore Nutella, nocciole, cioccolato, Nutella Biscuit.'),
-      item('Donuts Nutella XL','Sweet & Co.',3.90,'Donut gusto Nutella.'),
-      item('Cookies Chunk','Sweet & Co.',2.80,'Biscotti con gocce di cioccolato.'),
-      item('Donuts Strawberry','Sweet & Co.',3.00,'Donut gusto fragola.'),
+      item('Lotus Cheesecake','Cake & Cheesecake',5.90,'Cremoso alla vaniglia, crema Lotus, biscotto Lotus.'),
+      item('Cheesecake Nutella','Cake & Cheesecake',5.50,'Cheesecake Nutella.'),
+      item('Cheesecake Strawberry','Cake & Cheesecake',5.50,'Cheesecake alla fragola.'),
+      item('Cheesecake Blueberry','Cake & Cheesecake',5.50,'Cheesecake ai mirtilli.'),
 
-      item('Apple Pie','Cakes & Pies',5.90,'Mela e cannella.'),
-      item('Nutella Cake Slice','Cakes & Pies',5.40,'Pan di spagna cacao, frosting Nutella, Nutella Biscuit.'),
-      item('Carrot Cake Slice','Cakes & Pies',5.00,'Pan di spagna con noci e carote, frosting yogurt greco.'),
-      item('Cheesecake Nutella Slice','Cakes & Pies',6.10,'Cheesecake con Nutella e nocciole.'),
-      item('Cheesecake Strawberry Slice','Cakes & Pies',6.10,'Cheesecake con fragole e topping fragola.'),
-      item('Cheesecake Blueberry Slice','Cakes & Pies',6.10,'Cheesecake ai mirtilli.'),
-      item('Cheesecake Plain Slice','Cakes & Pies',4.90,'Cheesecake classica.'),
+      item('Bacon Cheese Dog','Hot Dog',9.50,'Würstel italiano, formaggio filante, erba cipollina, bacon, french fries.',[COMMON.pulledPorkExtra]),
+      item('House Dog','Hot Dog',7.90,'Würstel italiano con paprika e macis, french fries.',[COMMON.pulledPorkExtra]),
 
-      item('Rice & Nutella','Yogurt',4.50,'Yogurt bianco, Nutella, rice krispies.',[COMMON.yogurtGreekRice]),
+      item('Apple Pie','Sweet & Co.',5.90,'Mele, cannella, gelato al fior di latte.'),
+      item('Muffin Nutella','Sweet & Co.',3.50,'Muffin con cuore Nutella, granella di nocciole, cioccolato al latte, Nutella Biscuit.'),
+      item('Muffin Mirtillo','Sweet & Co.',3.50,'Muffin al mirtillo.'),
+      item('Muffin Chunk','Sweet & Co.',2.90,'Muffin con gocce di cioccolato.'),
+
+      item('Milkshake Mango','Milkshake & Sundae',5.90,'Milkshake mango. Edizione limitata.'),
+      item('Sundae Oreo','Milkshake & Sundae',5.90,'Sundae Oreo.'),
+      item('Sundae Nutella','Milkshake & Sundae',6.90,'Sundae Nutella.'),
+      item('Milkshake Ciliegia','Milkshake & Sundae',4.90,'Milkshake ciliegia.'),
+
+      item('Baby Burger Menu','Kids Menu',10.90,'Baby burger, french fries, pancakes, Nutella, acqua o succo di frutta. Kit creativo incluso.',[COMMON.kidsDrink]),
+      item('Baby Toast Menu','Kids Menu',10.90,'Baby toast prosciutto e formaggio, french fries, pancakes, Nutella, acqua o succo di frutta. Kit creativo incluso.',[COMMON.kidsDrink]),
+
+      item('Mango & Lime Brew','Smoothie',4.90,"Mango, succo d'arancia, lime, crema di latte al cocco."),
+      item('Green','Smoothie',4.90,'Mango, pesca, fragola, frutto della passione, arancia.'),
+      item('Detox','Smoothie',4.90,'Pesca, fragola, banana, mirtilli, cocco.'),
+      item("Spremuta d'Arancia",'Smoothie',3.00,"Spremuta d'arancia."),
+
+      item('Iced Tea','Fresh Drinks',3.50,'Tè freddo.',[COMMON.icedTeaFlavor]),
+      item('Iced Tea Passion Fruit','Fresh Drinks',3.50,'Tè freddo passion fruit.'),
+      item('Iced Tea Lime','Fresh Drinks',3.50,'Tè freddo lime.'),
+      item('Iced Tea Peach','Fresh Drinks',3.50,'Tè freddo pesca.'),
+      item('Cherry Cola','Fresh Drinks',3.90,'Cherry Cola.'),
+      item('U.S.A Sodas','Fresh Drinks',3.90,'Bibite USA in base alla disponibilità dello store.'),
+      item('Bibite alla Spina','Fresh Drinks',0,'Scegli formato Coca-Cola.',[COMMON.sodaSize]),
+
+      item('English Breakfast','Tea & Infusi',3.00,'Tè classico.'),
+      item('Rooibos','Tea & Infusi',3.00,'Tè Redbush deteinato.'),
+      item('Green Tea','Tea & Infusi',3.00,'Tè verde.'),
+      item('Calming','Tea & Infusi',3.00,'Infuso camomilla.'),
+
+      item('Rice & Nutella','Yogurt',4.50,'Yogurt bianco, Nutella, rice krispies.',[COMMON.yogurtGreek]),
       item('Granola','Yogurt',5.00,'Yogurt bianco, banane, fragole, mirtilli, muesli.',[COMMON.yogurtGreek]),
 
-      item('Milkshake Nutella','Milkshake & Smoothies',5.90,'Gelato fiordilatte, latte, Nutella, panna.'),
-      item('Milkshake Vanilla','Milkshake & Smoothies',4.90,'Milkshake vaniglia.'),
-      item('Milk Oreo','Milkshake & Smoothies',5.40,'Gelato fiordilatte, latte, topping Oreo, panna.'),
-      item('Milk Bounty','Milkshake & Smoothies',5.40,'Gelato, latte, cocco, Nutella, cioccolato, panna.'),
-      item('Milk Strawberry','Milkshake & Smoothies',5.40,'Gelato, latte, topping fragola, panna.'),
-      item('Milk Cherry','Milkshake & Smoothies',5.40,'Gelato, latte, topping ciliegia, panna.'),
-      item('Smoothie Caribbean','Milkshake & Smoothies',5.99,'Mango, pesca, fragola, passion fruit, arancia.'),
-      item('Smoothie Fenix','Milkshake & Smoothies',5.99,'Pesca, fragola, banana, mirtilli, cocco.'),
+      item('Iced Brain Fuel Coffee','Caffetteria',3.50,'Caffè solubile vaniglia francese con olio MCT e Lion’s Mane.',[COMMON.brainFuelMilk]),
+      item('Caffè','Caffetteria',1.20,'Caffè / macchiato caldo o freddo.'),
+      item('Caffè Doppio','Caffetteria',2.40,'Caffè doppio.'),
+      item('Caffè Decaffeinato','Caffetteria',1.40,'Caffè decaffeinato.'),
+      item('Caffè Macchiato Soia/Cocco','Caffetteria',1.40,'Caffè macchiato soia o cocco.'),
+      item('Vetrino','Caffetteria',1.50,'Vetrino.'),
+      item('Vetrino Deca/Soia/Orzo','Caffetteria',1.60,'Vetrino deca, soia o orzo.'),
+      item('Caffè Americano','Caffetteria',2.00,'Caffè americano.'),
+      item('Cappuccino','Caffetteria',1.60,'Cappuccino.'),
+      item('Cappuccino Ginseng','Caffetteria',2.00,'Cappuccino ginseng.'),
+      item('Latte Macchiato','Caffetteria',1.60,'Latte macchiato.'),
+      item('Latte Macchiato Soia','Caffetteria',1.80,'Latte macchiato soia.'),
+      item('Latte Bianco','Caffetteria',1.30,'Latte bianco.'),
+      item('Latte Soia/Cocco','Caffetteria',1.60,'Latte soia o cocco.'),
 
-      item('Ice Cream Nutella Cappuccino','Iced Cappuccino / Choco',4.90,'Gelato, doppio espresso, Nutella, nocciola, cioccolato.'),
-      item('Iced Cappuccino','Iced Cappuccino / Choco',3.90,'Bevanda fredda al cappuccino.',[COMMON.coconutMilk]),
-      item('Iced Choco','Iced Cappuccino / Choco',3.90,'Bevanda fredda al cioccolato.',[COMMON.coconutMilk]),
+      item('Ice Cream Nutella Cappuccino','Iced Cappuccino',4.90,'Gelato fiordilatte, doppio caffè espresso, Nutella, nocciole, cioccolato fondente, topping choconocciola.'),
+      item('Iced Cappuccino','Iced Cappuccino',3.90,'Iced cappuccino.',[COMMON.coconutMilk]),
+      item('Iced Choco','Iced Cappuccino',3.90,'Iced choco.',[COMMON.coconutMilk]),
 
-      item('Cappuccino','Caffetteria, tè e fresh drinks',1.60,'Caffetteria classica.'),
-      item('Cappuccino Ginseng','Caffetteria, tè e fresh drinks',2.00,'Caffetteria al ginseng.'),
-      item('Latte Macchiato','Caffetteria, tè e fresh drinks',1.60,'Latte macchiato.'),
-      item('Latte Bianco','Caffetteria, tè e fresh drinks',1.30,'Latte bianco.'),
-      item('English Breakfast Tea','Caffetteria, tè e fresh drinks',3.50,'Tè classico.'),
-      item('Calming Infusion','Caffetteria, tè e fresh drinks',3.50,'Camomilla.'),
-      item('Golden Infusion','Caffetteria, tè e fresh drinks',3.50,'Infuso arancia e curcuma.'),
-      item('Happy Mondays','Caffetteria, tè e fresh drinks',3.50,'Infuso limone, zenzero e pepe nero.'),
-      item('Snore and Peace','Caffetteria, tè e fresh drinks',3.50,'Infuso camomilla, melissa, lavanda.'),
-      item('Iced Tea Lime','Caffetteria, tè e fresh drinks',4.00,'Tè freddo lime.'),
-      item('Iced Tea Peach','Caffetteria, tè e fresh drinks',4.00,'Tè freddo pesca.'),
-      item('Iced Tea Passion Fruit','Caffetteria, tè e fresh drinks',4.00,'Tè freddo passion fruit.'),
-      item('Cherry Cola','Caffetteria, tè e fresh drinks',4.90,'Cola aromatizzata alla ciliegia.'),
-      item('Lemonade','Caffetteria, tè e fresh drinks',4.00,'Lemonade.'),
-
-      item('Coca-Cola in bottiglia','Sodas / Acqua / Succhi',3.90,'33 cl.'),
-      item('Coca-Cola Zero in bottiglia','Sodas / Acqua / Succhi',3.90,'33 cl.'),
-      item('ACE Juice','Sodas / Acqua / Succhi',2.80,'Arancia, carota, limone.'),
-      item('Blueberry Juice','Sodas / Acqua / Succhi',2.80,'Succo al mirtillo.'),
-      item('Pear Juice','Sodas / Acqua / Succhi',2.80,'Succo alla pera.'),
-      item('Pineapple Juice','Sodas / Acqua / Succhi',2.80,'Succo all’ananas.'),
-      item('Acqua naturale Ecobrick','Sodas / Acqua / Succhi',1.70,'50 cl.'),
-      item('Acqua gassata Ferrarelle','Sodas / Acqua / Succhi',1.70,'50 cl.'),
-      item('Bibite alla spina','Sodas / Acqua / Succhi',4.00,'Coca-Cola grande / altre bibite.',[{id:'sodaFlavor', title:'Gusto', required:false, multiple:false, options:[{name:'Coca-Cola',price:0},{name:'Coca-Cola Zero',price:0},{name:'Fanta/Sprite',price:0}]}]),
-      item('U.S.A. Sodas','Sodas / Acqua / Succhi',3.90,'Bibite USA.',[{id:'usaSodaFlavor', title:'Gusto', required:false, multiple:false, options:[{name:'Da chiedere',price:0},{name:'Cherry',price:0},{name:'Vanilla',price:0},{name:'Altro',price:0}]}]),
-
-      item('French Fries','Sides',5.50,'Patatine fritte.'),
-      item('Onion Rings','Sides',4.10,'Anelli di cipolla pastellati.'),
-      item('Cajun Fries','Sides',3.00,'Patatine speziate cajun.'),
-      item('Sweet Potato Fries','Sides',4.00,'Patatine dolci.'),
-
-      item('Birra Bud bottiglia','Alcolico',3.90,'33 cl.'),
-      item('Budweiser alla spina 0,25','Alcolico',3.50,'Birra alla spina 0,25.')
+      item('Pulled Pork Burger','NY Burger',14.90,'Pulled Pork BBQ Home Made, burger, formaggio, lattuga, pomodori, french fries.'),
+      item('Crispy Burger','NY Burger',14.90,'Burger, formaggio, bacon, lattuga, pomodori freschi, french fries.'),
+      item('Cheese Burger','NY Burger',13.90,'Burger, formaggio, lattuga, pomodori freschi, french fries.',[COMMON.burgerBeer]),
+      item('Veggie Burger','NY Burger',10.90,'Burger di patate, rucola, pomodori freschi, mozzarella, avocado, zucchine, ranch dressing.',[COMMON.veggieExtras])
     ];
 
     function item(name, category, price, description = '', modifiers = []) {
