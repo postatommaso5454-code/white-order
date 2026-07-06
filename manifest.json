@@ -1,7 +1,7 @@
 {
-  "name": "White Order - PWA Comande",
-  "short_name": "White Order",
-  "description": "PWA offline per prendere comande al tavolo, con menu White Bakery aggiornato, recenti, storico e modifiche.",
+  "name": "Comande White Bakery",
+  "short_name": "Comande",
+  "description": "PWA offline per prendere comande al tavolo.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,15 @@
   "background_color": "#fff7fb",
   "theme_color": "#c6426e",
   "icons": [
-    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
