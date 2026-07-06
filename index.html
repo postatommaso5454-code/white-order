@@ -6,11 +6,11 @@
   <meta name="theme-color" content="#c6426e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="White Order" />
+  <meta name="apple-mobile-web-app-title" content="Comande" />
   <meta name="format-detection" content="telephone=no" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <title>White Order - Comande Offline</title>
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <title>Comande White Bakery</title>
   <style>
     :root {
       --bg: #fff7fb;
@@ -167,6 +167,7 @@
     .recent-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 8px; }
     .recent-title { font-size: 11px; font-weight: 950; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
     .clear-recent-btn { min-height: 30px; border-radius: 999px; padding: 0 10px; background: #fff; color: var(--danger); border: 1px solid #ffd0d6; font-size: 11px; font-weight: 950; }
+    .history-head-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
     .recent-list { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
     .recent-list::-webkit-scrollbar { display: none; }
     .recent-chip { flex: 0 0 auto; display: inline-flex; align-items: stretch; border-radius: 999px; overflow: hidden; border: 1px solid #f2d99b; background: #fff4dc; }
@@ -211,6 +212,14 @@
     .order-row { border: 1px solid var(--line); border-radius: 16px; background: #fff; padding: 10px; display: grid; gap: 8px; }
     .order-row.auto-fee { background: #fffaf0; border-color: #f2d99b; }
     .auto-label { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: #fff4dc; color: #6c4700; font-size: 10px; font-weight: 950; padding: 3px 7px; margin-left: 6px; vertical-align: middle; }
+    .manual-label { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; background: #eaf1ff; color: #27519b; font-size: 10px; font-weight: 950; padding: 3px 7px; margin-left: 6px; vertical-align: middle; }
+    .fee-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .fee-chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 8px; font-size: 11px; font-weight: 850; line-height: 1; background: #fff; border: 1px solid var(--line); color: var(--muted); }
+    .fee-chip.manual { background: #eaf1ff; color: #27519b; border-color: #cfe0ff; }
+    .fee-chip.warn { background: #fff4dc; color: #6c4700; border-color: #f2d99b; }
+    .fee-actions { grid-template-columns: 44px 44px 1fr; align-items: center; }
+    .fee-actions .reset { background: #fff; color: var(--muted); border: 1px solid var(--line); }
+    .fee-zero { opacity: .68; }
     .row-main { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; }
     .row-title { font-weight: 950; font-size: 15px; line-height: 1.15; }
     .row-sub { color: var(--muted); font-weight: 760; font-size: 12px; line-height: 1.35; margin-top: 3px; white-space: pre-wrap; }
@@ -221,6 +230,8 @@
     .row-actions .edit { background: #eaf1ff; color: var(--blue); }
     .order-total { display: flex; align-items: center; justify-content: space-between; font-size: 18px; font-weight: 950; padding: 11px 12px; border-radius: 16px; background: var(--paper-2); margin-top: 10px; }
     .big-actions { display: grid; gap: 8px; margin-top: 10px; }
+    .danger-zone { display: flex; justify-content: flex-end; padding-top: 6px; margin-top: 2px; border-top: 1px dashed var(--line); }
+    .small-danger-btn { min-height: 34px; border-radius: 12px; padding: 0 12px; font-size: 12px; font-weight: 950; background: #fff; color: var(--danger); border: 1px solid #f3bdc6; }
     .big-btn { min-height: 48px; border-radius: 16px; font-size: 15px; font-weight: 950; background: var(--brand); color: #fff; }
     .big-btn.secondary { background: #fff; color: var(--ink); border: 1px solid var(--line); }
     .big-btn.good { background: var(--good); }
@@ -250,12 +261,17 @@
     .sheet { width: 100%; max-height: 90dvh; overflow: auto; background: var(--bg); border-radius: 24px 24px 0 0; padding: 12px 10px calc(12px + var(--safe-bottom)); box-shadow: 0 -18px 55px rgba(0,0,0,.22); }
     .sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
     .sheet-title { margin: 0; font-size: 21px; font-weight: 950; letter-spacing: -.03em; }
+    #addModifiedBtn { display: block; margin: 12px 0 0 auto; min-width: 132px; padding-inline: 24px; }
     .close-btn { width: 44px; height: 44px; border-radius: 14px; background: #fff; border: 1px solid var(--line); font-weight: 950; }
-    .option-group { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 11px; margin: 10px 0; }
+    .option-group { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 11px; margin: 10px 0; transition: background .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    .option-group.required-missing { background: #fff1f3; border-color: #e45c72; box-shadow: 0 0 0 3px rgba(228,92,114,.12); }
+    .option-group.required-missing .option-title { color: #b21f3a; }
+    .option-group.required-missing .option-title small::after { content: " · da scegliere"; color: #b21f3a; font-weight: 950; }
     .option-title { margin: 0 0 8px; font-size: 15px; font-weight: 950; }
     .option-title small { color: var(--muted); font-weight: 850; }
     .option-list { display: grid; grid-template-columns: 1fr; gap: 8px; }
     .option-chip { min-height: 46px; border-radius: 14px; background: #fff; border: 2px solid var(--line); color: var(--ink); font-size: 14px; font-weight: 900; padding: 8px 10px; text-align: left; }
+    .option-group.required-missing .option-chip { border-color: #efb6c1; }
     .option-chip.selected { border-color: var(--brand); background: var(--brand-2); color: var(--brand-dark); }
     .option-price { color: var(--muted); font-size: 12px; font-weight: 850; }
     .note-area { width: 100%; min-height: 84px; resize: vertical; border: 2px solid var(--line); border-radius: 16px; padding: 12px; background: #fff; color: var(--ink); font-weight: 760; }
@@ -349,9 +365,8 @@
           <div class="big-actions">
             <button id="showComandaBtn" class="big-btn blue" type="button">Vista comanda</button>
             <button id="confirmBtn" class="big-btn good" type="button">Conferma comanda</button>
-            <div class="compact-actions">
-              <button id="paidBtn" class="big-btn warn" type="button">Pagato / chiudi</button>
-              <button id="deleteOrderBtn" class="big-btn danger" type="button">Cancella</button>
+            <div class="danger-zone">
+              <button id="deleteOrderBtn" class="small-danger-btn" type="button">Cancella ordine</button>
             </div>
           </div>
         </div>
@@ -359,13 +374,13 @@
 
       <section class="panel history-panel" aria-label="Storico ordini">
         <div class="panel-head">
-          <h2 class="panel-title">Storico e tavoli</h2>
-          <button id="clearClosedBtn" class="small-btn" type="button">Pulisci chiusi</button>
+          <h2 class="panel-title">Storico comande</h2>
+          <div class="history-head-actions">
+            <span class="status-pill status-confirmed">Modificabile</span>
+            <button id="clearHistoryBtn" class="clear-recent-btn" type="button">Svuota tutto</button>
+          </div>
         </div>
         <div class="panel-body">
-          <h3 class="recent-title">Tavoli aperti</h3>
-          <div id="openOrders" class="open-orders"></div>
-          <h3 class="recent-title" style="margin-top: 16px;">Storico</h3>
           <div id="historyList" class="history-list"></div>
         </div>
       </section>
@@ -414,7 +429,7 @@
 
   <script>
     const CATEGORIES = [
-      'Best Seller','Novità','All Days Brunch','American Breakfast','Specialities','Club & Sandwich','Sides','Salad','Pancake & Waffle','Cake & Cheesecake','Hot Dog','Sweet & Co.','Milkshake & Sundae','Kids Menu','Smoothie','Fresh Drinks','Tea & Infusi','Yogurt','Caffetteria','Iced Cappuccino','NY Burger'
+      'Best Seller','Novità & Speciali','All Days Brunch','American Breakfast','Specialities','Club & Sandwich','Sides & Salad','NY Burgers','Hot Dog','Pancake & Waffle','Cake & Cheesecake','Sweet & Co.','Milkshake & Sundae','Kids Menu','Smoothies','Fresh Drinks','Tea & Infusi','Yogurt','Caffetteria','Iced Cappuccino'
     ];
 
     const AUTO_FEES = {
@@ -422,7 +437,7 @@
       service: { name: 'Servizio', price: 0.30 }
     };
 
-    const COVER_CATEGORIES = new Set(['Novità','All Days Brunch','American Breakfast','Specialities','Club & Sandwich','Sides','Salad','Hot Dog','Kids Menu','NY Burger']);
+    const COVER_CATEGORIES = new Set(['All Days Brunch','American Breakfast','Specialities','Club & Sandwich','Sides & Salad','Hot Dog','Kids Menu','NY Burgers']);
     const SERVICE_CATEGORIES = new Set(['Pancake & Waffle','Cake & Cheesecake','Sweet & Co.','Milkshake & Sundae','Yogurt']);
 
     const COMMON = {
@@ -441,22 +456,22 @@
         ]
       },
       brunchChoice: {
-        id: 'brunchChoice', title: 'Scelta dolce inclusa', required: false, multiple: false,
+        id: 'brunchChoice', title: 'Scelta inclusa', required: false, multiple: false,
         options: [
-          { name: 'Pancake + yogurt bianco/muesli/frutta/sciroppo', price: 0 },
-          { name: 'Pancake con frutta fresca e sciroppo', price: 0 }
+          { name: 'Pancake', price: 0 },
+          { name: 'Yogurt bianco con muesli, frutta e sciroppo', price: 0 }
         ]
       },
       nutellaExtra: {
-        id: 'nutellaExtra', title: 'Extra', required: false, multiple: true,
+        id: 'nutellaExtra', title: 'Aggiunte', required: false, multiple: true,
         options: [{ name: 'Nutella', price: 2 }]
       },
-      americanClassicExtras: {
-        id: 'americanClassicExtras', title: 'Extra', required: false, multiple: true,
+      americanExtras: {
+        id: 'americanExtras', title: 'Aggiunte', required: false, multiple: true,
         options: [{ name: 'Prosciutto cotto', price: 2 }, { name: 'Wurstel', price: 2 }]
       },
       pancakeExtras: {
-        id: 'pancakeExtras', title: 'Provalo con', required: false, multiple: true,
+        id: 'pancakeExtras', title: 'Aggiunte', required: false, multiple: true,
         options: [
           { name: "Succo d'arancia", price: 1.5 },
           { name: 'Iced cappuccino/choco', price: 2 }
@@ -471,32 +486,23 @@
         ]
       },
       pulledPorkExtra: {
-        id: 'pulledPorkExtra', title: 'Provalo con', required: false, multiple: true,
+        id: 'pulledPorkExtra', title: 'Aggiunte', required: false, multiple: true,
         options: [{ name: 'Pulled Pork BBQ Home Made', price: 3 }]
       },
-      coconutMilk: {
-        id: 'coconutMilk', title: 'Extra', required: false, multiple: true,
-        options: [{ name: 'Latte di cocco', price: 1 }]
-      },
-      burgerBeer: {
-        id: 'burgerBeer', title: 'Provalo con', required: false, multiple: true,
-        options: [{ name: 'Birra alla spina Budweiser 0,25', price: 3.5 }]
-      },
       veggieExtras: {
-        id: 'veggieExtras', title: 'Provalo con', required: false, multiple: true,
-        options: [{ name: 'French fries', price: 1.5 }, { name: 'Onion rings', price: 1.5 }]
+        id: 'veggieExtras', title: 'Aggiunte', required: false, multiple: true,
+        options: [{ name: 'Patatine fritte', price: 1.5 }, { name: 'Anelli di cipolla', price: 1.5 }]
       },
-      yogurtGreek: {
-        id: 'yogurtGreek', title: 'Provalo con', required: false, multiple: false,
-        options: [{ name: 'Yogurt greco', price: 1 }]
+      juiceFlavor: {
+        id: 'juiceFlavor', title: 'Gusto succo', required: true, multiple: false,
+        options: [
+          { name: 'Pesca', price: 0 }, { name: 'ACE', price: 0 }, { name: 'Mirtillo', price: 0 },
+          { name: 'Arancia', price: 0 }, { name: 'Pera', price: 0 }, { name: 'Ananas', price: 0 }
+        ]
       },
-      sodaSize: {
-        id: 'sodaSize', title: 'Formato', required: true, multiple: false,
-        options: [{ name: 'Coca Cola piccola', price: 3 }, { name: 'Coca Cola grande', price: 4 }]
-      },
-      icedTeaFlavor: {
-        id: 'icedTeaFlavor', title: 'Gusto', required: true, multiple: false,
-        options: [{ name: 'Passion Fruit', price: 0 }, { name: 'Lime', price: 0 }, { name: 'Peach', price: 0 }]
+      waterType: {
+        id: 'waterType', title: 'Tipo acqua', required: true, multiple: false,
+        options: [{ name: 'Naturale', price: 0 }, { name: 'Gassata', price: 0 }]
       },
       brainFuelMilk: {
         id: 'brainFuelMilk', title: 'Base', required: false, multiple: false,
@@ -507,137 +513,185 @@
           { name: 'Latte di soia', price: 0 },
           { name: 'Latte di cocco', price: 0 }
         ]
-      },
-      avoVariant: {
-        id: 'avoVariant', title: 'Variante', required: true, multiple: false,
-        options: [{ name: 'Avo Lox', price: 0 }, { name: 'Avo Green', price: 0 }]
-      },
-      clubVariant: {
-        id: 'clubVariant', title: 'Variante', required: false, multiple: false,
-        options: [{ name: 'Classico', price: 0 }, { name: 'Con pollo alla piastra', price: 0 }]
       }
     };
 
     const MENU = [
-      item('Mama\'s Breakfast','Best Seller',12.90,"Uova strapazzate o occhio di bue, bacon, pane tostato, burro, marmellata, pancake/yogurt. Bevanda inclusa.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
-      item('Club Sandwich','Best Seller',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.',[COMMON.clubVariant]),
+      item("Mama's Breakfast",'Best Seller',12.90,"Uova, bacon, pane tostato, burro, marmellata, con pancake o yogurt. Include succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('Club Sandwich','Best Seller',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.'),
       item('Pancake Nutella','Best Seller',5.90,'Pancake con Nutella.',[COMMON.pancakeExtras]),
       item('Cheesecake Strawberry','Best Seller',5.50,'Cheesecake alla fragola.'),
 
-      item('House BBQ Ribs','Novità',16.90,'Costine di maiale cotte 24 ore, salsa BBQ, ziggy fries e ranch salad.'),
-      item('Pulled Pork Burger','Novità',14.90,'Pulled Pork BBQ Home Made, burger, formaggio, lattuga, pomodori, french fries.'),
-      item('Bacon Cheese Dog','Novità',9.50,'Würstel italiano, formaggio filante, erba cipollina, bacon, french fries.',[COMMON.pulledPorkExtra]),
-      item('House Dog','Novità',7.90,'Würstel italiano con paprika e macis, french fries.',[COMMON.pulledPorkExtra]),
+      item('Ruby Pancake','Novità & Speciali',7.90,'Cioccolato ruby cremoso, fragole, marshmallows, gelato fiordilatte e cuori di zucchero.',[COMMON.pancakeExtras]),
+      item('Stay Red - Strawberries never lie','Novità & Speciali',4.90,'Crumble alle mandorle, crema soffice alla fragola, gelatina e glassa fragola.'),
+      item('Sundae Lotus','Novità & Speciali',6.90,'Gelato fiordilatte, dulce de leche, biscotto Lotus, crumble di biscotto.'),
+      item('Milkshake Mango','Novità & Speciali',5.90,'Gusto mango, edizione limitata.'),
 
-      item('Mama\'s Breakfast','All Days Brunch',12.90,"Uova, bacon, toast, burro, marmellata, pancake/yogurt. Compreso succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
-      item('English Breakfast','All Days Brunch',12.90,"Uova, fungo e pomodoro, pane ai cereali, spinaci, avocado, hummus yogurt greco, pancake/yogurt. Bevanda inclusa.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
-      item('Club Sandwich Special','All Days Brunch',15.90,'Club sandwich + Coca alla spina 0,3 o birra alla spina 0,2 + mezza fetta di Nutella cake.',[{id:'specialDrink', title:'Bevanda inclusa', required:true, multiple:false, options:[{name:'Coca alla spina 0,3',price:0},{name:'Birra alla spina 0,2',price:0}]}]),
-      item('Ocean Breakfast','All Days Brunch',12.90,"Omelette salmone, ranch, insalata, mango, pane cereali, white vinaigrette, pancake/yogurt. Bevanda inclusa.",[COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item("Mama's Breakfast",'All Days Brunch',12.90,"Uova, bacon, pane tostato, burro, marmellata, con pancake o yogurt. Include succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('English Breakfast','All Days Brunch',12.90,"Uova, fungo e pomodoro, pane ai cereali, spinaci, avocado, crema di hummus allo yogurt greco, con pancake o yogurt. Include succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('Ocean Breakfast','All Days Brunch',12.90,"Omelette al salmone, ranch, mix insalata, mango, pane ai cereali, white vinaigrette, con pancake o yogurt. Include succo d'arancia o caffè americano.",[COMMON.brunchChoice, COMMON.drinkIncluded, COMMON.nutellaExtra]),
+      item('Club Sandwich Special','All Days Brunch',15.90,'Club sandwich + coca alla spina 0,3 o birra alla spina 0,2 + mezza fetta di Nutella Cake.',[{id:'specialDrink', title:'Bevanda inclusa', required:true, multiple:false, options:[{name:'Coca alla spina 0,3',price:0},{name:'Birra alla spina 0,2',price:0}]}]),
+      item('Daily Market Combo','All Days Brunch',11.90,'Daily Market Salad + acqua + macedonia.'),
+      item('Fitness Chicken Avo','All Days Brunch',12.90,'Petto di pollo, insalata, carote, mais, grana, bagel tostato con avocado e cream cheese + acqua + mezza fetta di Carrot Cake.'),
+      item('Healthy Chicken Combo','All Days Brunch',12.90,'Petto di pollo, riso, pomodorini, zucchine grigliate, maionese vegana, rucola, grana + acqua + mezza fetta di Carrot Cake.'),
 
-      item('Big Brooklin Breakfast','American Breakfast',11.90,"Uova strapazzate, bacon, burro e pancake con sciroppo d'acero. Bevanda inclusa.",[COMMON.drinkIncluded]),
-      item('American Breakfast Classic','American Breakfast',9.90,"Uova strapazzate o occhio di bue, pane cereali, bacon, burro, confettura. Bevanda inclusa.",[COMMON.eggs, COMMON.drinkIncluded, COMMON.americanClassicExtras]),
-      item('Eggs Benedict Lox','American Breakfast',11.90,"Buttermilk, uova pochè, salmone Premium Mowi, salsa olandese, pepe rosa. Bevanda inclusa.",[COMMON.drinkIncluded]),
-      item('Eggs Benedict Ham','American Breakfast',9.90,"Buttermilk, uova pochè, prosciutto cotto, salsa olandese, pepe rosa. Bevanda inclusa.",[COMMON.drinkIncluded]),
+      item('Big Brooklyn Breakfast','American Breakfast',11.90,"Uova strapazzate, bacon, burro e pancake con sciroppo d'acero. Include succo d'arancia o caffè americano.",[COMMON.drinkIncluded, COMMON.americanExtras]),
+      item('American Breakfast Classic','American Breakfast',9.90,"Uova strapazzate o all'occhio di bue, pane sandwich ai cereali, bacon, burro e confettura. Include succo d'arancia o caffè americano.",[COMMON.eggs, COMMON.drinkIncluded, COMMON.americanExtras]),
+      item('Eggs Benedict Lox','American Breakfast',11.90,"Buttermilk, uova pochè, salmone Premium Mowi, salsa olandese e pepe rosa. Include succo d'arancia o caffè americano.",[COMMON.drinkIncluded]),
+      item('Eggs Benedict Ham','American Breakfast',9.90,"Buttermilk, uova pochè, prosciutto cotto, salsa olandese e pepe rosa. Include succo d'arancia o caffè americano.",[COMMON.drinkIncluded]),
+      item('Banana Split Breakfast','American Breakfast',7.90,"Banane, fragole, mirtilli, yogurt greco, muesli, confettura ai frutti di bosco, burro d'arachidi, topping cioccolato nocciola, cannella. Include bevanda.",[COMMON.drinkIncluded]),
 
       item('House BBQ Ribs','Specialities',16.90,'Costine di maiale cotte 24 ore, salsa BBQ, ziggy fries e ranch salad.'),
-      item('Rice Chicken Thai','Specialities',12.90,'Riso basmati curcuma, pollo teriyaki zenzero/lime, verdure, sesamo, arachidi, mandorle.'),
+      item('Rice Chicken Thai','Specialities',12.90,'Riso basmati alla curcuma, petto di pollo teriyaki zenzero/lime, verdure, sesamo, arachidi, mandorle.'),
       item('Double Bacon Poutine','Specialities',10.90,'Doppio bacon crispy, french fries, formaggio filante, salsa BBQ.',[COMMON.pulledPorkExtra]),
       item('Schnitzel Steak','Specialities',13.50,'Cotoletta di maiale in panatura croccante, french fries, salsa BBQ, maionese.'),
 
-      item('Avocado Toast','Club & Sandwich',10.90,'Avo Lox o Avo Green.',[COMMON.avoVariant]),
-      item('Club Sandwich','Club & Sandwich',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.',[COMMON.clubVariant]),
+      item('Club Sandwich','Club & Sandwich',11.90,'Pane ai cereali, bacon, tacchino arrosto, uova strapazzate, lattuga, pomodori, ranch dressing.'),
+      item('Avocado Toast - Avo Lox','Club & Sandwich',10.90,'Pan bauletto ai cereali, salmone Premium Mowi, cream cheese alle erbe, spinacino, avocado, pepe rosa, sesamo.'),
+      item('Avocado Toast - Avo Green','Club & Sandwich',10.90,'Pan bauletto ai cereali, hummus di ceci, avocado, rucola, pomodori e cetrioli, feta, basilico.'),
       item('Veggie Club Sandwich','Club & Sandwich',9.90,'Pane ai cereali, avocado, zucchine grigliate, uova strapazzate, lattuga, pomodori, ranch dressing.'),
-      item('Long Beach','Club & Sandwich',8.90,'Tortilla di grano, pollo marinato, formaggio spalmabile, lattuga, avocado, pomodoro.'),
+      item('Lox Club Sandwich','Club & Sandwich',14.90,'Pane ai cereali, avocado, salmone affumicato, uova strapazzate, lattuga, salsa pomodori home made, ranch.'),
+      item('Tamago Sandwich','Club & Sandwich',9.90,'Pane ai cereali, formaggio spalmabile, avocado, insalata di uova sode, spinacino.'),
+      item('Long Beach Wrap','Club & Sandwich',8.90,'Tortilla di grano, petto di pollo, formaggio spalmabile, lattuga, avocado, pomodoro fresco.'),
+      item('New Bagel Lox','Club & Sandwich',11.90,'Bagel multigrain, salmone affumicato Premium Mowi, formaggio spalmabile con erbe, spinaci freschi.'),
+      item('Cheese Toast','Club & Sandwich',7.50,'Pane sandwich ai cereali, prosciutto cotto, doppio formaggio.'),
+      item('Ruben Sandwich','Club & Sandwich',10.90,'Pulled Pork BBQ Home Made cotto a basse temperature, bacon, formaggio filante.'),
 
-      item('French Fries','Sides',4.50,'Patatine fritte.'),
-      item('Onion Rings','Sides',3.50,'Anelli di cipolla pastellati.'),
+      item('French Fries','Sides & Salad',4.50,'Patatine fritte.'),
+      item('Onion Rings','Sides & Salad',3.50,'Anelli di cipolla pastellati.'),
+      item('Lox Salad','Sides & Salad',13.90,'Lattuga, rucola, salmone affumicato Premium Mowi, mango, avocado, sesamo, white vinaigrette, pane tostato.'),
+      item('Chicken Caesar Salad','Sides & Salad',11.90,'Lattuga, petto di pollo, grana, ranch dressing, white vinaigrette, pomodorini, pane tostato.'),
+      item('Daily Market Salad','Sides & Salad',8.90,'Bagel al sesamo, hummus, insalata, carote, zucchine, pomodori, mais, rucola, mela verde, fragole, mandorle, maionese vegana.'),
+      item('Bretzel Club Salad','Sides & Salad',11.50,'Lattuga, tacchino arrosto, bacon crispy, uova strapazzate, pomodorini, perle di bretzel, ranch, white vinaigrette.'),
 
-      item('Lox Salad','Salad',13.90,'Lattuga, rucola, salmone affumicato Premium Mowi, mango, avocado, sesamo, white vinaigrette, pane tostato.'),
-      item('Chicken Caesar','Salad',11.90,'Lattuga, pollo marinato, grana, ranch dressing, white vinaigrette, pomodorini, pane tostato.'),
-      item('Daily Market Salad','Salad',8.90,'Bagel sesamo, hummus ceci, insalata, carote, zucchine, pomodori, mais, rucola, mela verde, fragole, mandorle, maionese vegana.'),
-      item('Bretzel Club Salad','Salad',11.50,'Lattuga, tacchino arrosto, bacon crispy, uova strapazzate, pomodorini, perle di bretzel, ranch, white vinaigrette.'),
+      item('Pulled Pork Burger','NY Burgers',14.90,'Pulled Pork BBQ Home Made cotto 24h, burger, formaggio, lattuga, pomodori freschi, french fries.'),
+      item('Crispy Burger','NY Burgers',14.90,'Burger, formaggio, bacon, lattuga, pomodori freschi, french fries.'),
+      item('Cheese Burger','NY Burgers',13.90,'Burger, formaggio, lattuga, pomodori freschi, french fries.'),
+      item('Basic Burger','NY Burgers',12.90,'Burger, lattuga, pomodori freschi, french fries.'),
+      item('Veggie Burger','NY Burgers',10.90,'Burger di patate, rucola, pomodori freschi, mozzarella, avocado, zucchine, ranch dressing.',[COMMON.veggieExtras]),
 
-      item('Pancake Basic','Pancake & Waffle',5.00,'Pancake classici.',[COMMON.pancakeExtras]),
-      item('Pancake Nutella','Pancake & Waffle',5.90,'Pancake con Nutella.',[COMMON.pancakeExtras]),
-      item('Pancake Fruit','Pancake & Waffle',6.90,'Fragole, banane, mirtilli.',[COMMON.pancakeExtras]),
-      item('Pancake Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.',[COMMON.pancakeExtras]),
-
-      item('Lotus Cheesecake','Cake & Cheesecake',5.90,'Cremoso alla vaniglia, crema Lotus, biscotto Lotus.'),
-      item('Cheesecake Nutella','Cake & Cheesecake',5.50,'Cheesecake Nutella.'),
-      item('Cheesecake Strawberry','Cake & Cheesecake',5.50,'Cheesecake alla fragola.'),
-      item('Cheesecake Blueberry','Cake & Cheesecake',5.50,'Cheesecake ai mirtilli.'),
-
-      item('Bacon Cheese Dog','Hot Dog',9.50,'Würstel italiano, formaggio filante, erba cipollina, bacon, french fries.',[COMMON.pulledPorkExtra]),
+      item('Bacon Cheese Dog','Hot Dog',9.50,'Würstel italiano, paprika e macis, formaggio filante, erba cipollina, bacon, french fries.',[COMMON.pulledPorkExtra]),
       item('House Dog','Hot Dog',7.90,'Würstel italiano con paprika e macis, french fries.',[COMMON.pulledPorkExtra]),
 
-      item('Apple Pie','Sweet & Co.',5.90,'Mele, cannella, gelato al fior di latte.'),
-      item('Muffin Nutella','Sweet & Co.',3.50,'Muffin con cuore Nutella, granella di nocciole, cioccolato al latte, Nutella Biscuit.'),
-      item('Muffin Mirtillo','Sweet & Co.',3.50,'Muffin al mirtillo.'),
-      item('Muffin Chunk','Sweet & Co.',2.90,'Muffin con gocce di cioccolato.'),
+      item('Pancake Basic','Pancake & Waffle',5.00,'Pancake classici.',[COMMON.nutellaExtra, COMMON.pancakeExtras]),
+      item('Pancake Nutella','Pancake & Waffle',5.90,'Pancake con Nutella.',[COMMON.pancakeExtras]),
+      item('Pancake Fruit','Pancake & Waffle',6.90,'Fragole, banane, mirtilli.',[COMMON.nutellaExtra, COMMON.pancakeExtras]),
+      item('Pancake Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.',[COMMON.nutellaExtra, COMMON.pancakeExtras]),
+      item('Pancake Ice Cream Fruit Sandwich','Pancake & Waffle',7.90,'Gelato fior di latte, fragole, banane, mirtilli, topping fragola, rice krispies.',[COMMON.nutellaExtra, COMMON.pancakeExtras]),
+      item('Pancake Apple & Cinnamon','Pancake & Waffle',5.90,'Mele e salsa alla cannella.',[COMMON.nutellaExtra, COMMON.pancakeExtras]),
+      item('Waffle Basic','Pancake & Waffle',5.00,'Waffle classico.',[COMMON.pancakeExtras]),
+      item('Waffle Nutella','Pancake & Waffle',5.90,'Waffle con Nutella.',[COMMON.pancakeExtras]),
+      item('Waffle Fruit','Pancake & Waffle',6.90,'Fragole, banane, mirtilli.',[COMMON.pancakeExtras]),
+      item('Waffle Yogurt Fruit Sandwich','Pancake & Waffle',7.90,'Yogurt bianco, fragole, banane, mirtilli, topping fragola.',[COMMON.pancakeExtras]),
+      item('Waffle Ice Cream Fruit Sandwich','Pancake & Waffle',7.90,"Gelato fior di latte, fragole, banane, mirtilli, sciroppo d'acero, rice krispies, panna.",[COMMON.pancakeExtras]),
 
-      item('Milkshake Mango','Milkshake & Sundae',5.90,'Milkshake mango. Edizione limitata.'),
+      item('Lotus Cheesecake','Cake & Cheesecake',5.90,'Lotus cheesecake.'),
+      item('Cheesecake Nutella','Cake & Cheesecake',5.50,'Cheesecake Nutella.'),
+      item('Cheesecake Strawberry','Cake & Cheesecake',5.50,'Cheesecake Strawberry.'),
+      item('Cheesecake Blueberry','Cake & Cheesecake',5.50,'Cheesecake Blueberry.'),
+      item('Angel Cake Fruit','Cake & Cheesecake',4.50,"Pan di spagna senza lattosio, frutta fresca e sciroppo d'acero."),
+      item('Angel Cake Plain','Cake & Cheesecake',2.50,"Pan di spagna senza lattosio, panna montata e sciroppo d'acero."),
+      item('Carrot Cake','Cake & Cheesecake',4.90,'Torta di carote, noci, farina di kamut, frosting di panna e ricotta.'),
+      item('Nutella Cake','Cake & Cheesecake',4.90,'Pan di spagna al cioccolato, frosting alla Nutella, granella di nocciole, Nutella biscuit.'),
+
+      item('Apple Pie','Sweet & Co.',5.90,'Mele, cannella, gelato al fior di latte.'),
+      item('Muffin Nutella','Sweet & Co.',3.50,'Muffin Nutella.'),
+      item('Muffin Mirtillo','Sweet & Co.',3.50,'Muffin mirtillo.'),
+      item('Muffin Chunk','Sweet & Co.',2.90,'Gocce di cioccolato.'),
+      item('Donut Oreo XL Size','Sweet & Co.',3.50,'Donut Oreo XL.'),
+      item('Donut Strawberry XL Size','Sweet & Co.',3.50,'Donut Strawberry XL.'),
+      item('Donut Nutella XL Size','Sweet & Co.',3.50,'Donut Nutella XL.'),
+      item('Cookie Chunk','Sweet & Co.',2.50,'Cookie con gocce di cioccolato.'),
+
       item('Sundae Oreo','Milkshake & Sundae',5.90,'Sundae Oreo.'),
+      item('Sundae Fruit & Rice','Milkshake & Sundae',6.90,'Sundae Fruit & Rice.'),
       item('Sundae Nutella','Milkshake & Sundae',6.90,'Sundae Nutella.'),
       item('Milkshake Ciliegia','Milkshake & Sundae',4.90,'Milkshake ciliegia.'),
+      item('Milkshake Oreo','Milkshake & Sundae',4.90,'Milkshake Oreo.'),
+      item('Milkshake Nutella','Milkshake & Sundae',5.90,'Milkshake Nutella.'),
+      item('Milkshake Vanilla','Milkshake & Sundae',4.90,'Milkshake vanilla.'),
+      item('Milkshake Strawberry','Milkshake & Sundae',4.90,'Milkshake strawberry.'),
 
-      item('Baby Burger Menu','Kids Menu',10.90,'Baby burger, french fries, pancakes, Nutella, acqua o succo di frutta. Kit creativo incluso.',[COMMON.kidsDrink]),
-      item('Baby Toast Menu','Kids Menu',10.90,'Baby toast prosciutto e formaggio, french fries, pancakes, Nutella, acqua o succo di frutta. Kit creativo incluso.',[COMMON.kidsDrink]),
+      item('Baby Burger Menu','Kids Menu',10.90,'Baby burger, patatine fritte, pancakes, Nutella, acqua o succo di frutta.',[COMMON.kidsDrink]),
+      item('Baby Toast Menu','Kids Menu',10.90,'Baby toast cotto e formaggio, patatine fritte, pancakes, Nutella, acqua o succo di frutta.',[COMMON.kidsDrink]),
+      item('Baby Corn Dog Menu','Kids Menu',10.90,'2 baby corn dog, patatine fritte, pancakes, Nutella, acqua o succo di frutta.',[COMMON.kidsDrink]),
 
-      item('Mango & Lime Brew','Smoothie',4.90,"Mango, succo d'arancia, lime, crema di latte al cocco."),
-      item('Green','Smoothie',4.90,'Mango, pesca, fragola, frutto della passione, arancia.'),
-      item('Detox','Smoothie',4.90,'Pesca, fragola, banana, mirtilli, cocco.'),
-      item("Spremuta d'Arancia",'Smoothie',3.00,"Spremuta d'arancia."),
+      item('Smoothie Mango & Lime Brew','Smoothies',4.90,"Mango, succo d'arancia, lime, crema di latte al cocco."),
+      item('Smoothie Green','Smoothies',4.90,'Mango, pesca, fragola, frutto della passione, arancia.'),
+      item('Smoothie Detox','Smoothies',4.90,'Pesca, fragola, banana, mirtilli, cocco.'),
+      item('Smoothie Energy','Smoothies',4.90,'Smoothie Energy.'),
+      item("Spremuta d'Arancia",'Smoothies',3.00,"Spremuta d'arancia."),
 
-      item('Iced Tea','Fresh Drinks',3.50,'Tè freddo.',[COMMON.icedTeaFlavor]),
       item('Iced Tea Passion Fruit','Fresh Drinks',3.50,'Tè freddo passion fruit.'),
       item('Iced Tea Lime','Fresh Drinks',3.50,'Tè freddo lime.'),
       item('Iced Tea Peach','Fresh Drinks',3.50,'Tè freddo pesca.'),
+      item('Lemonade Watermelon','Fresh Drinks',3.50,'Lemonade watermelon.'),
+      item('Lemonade Tropical','Fresh Drinks',3.50,'Lemonade tropical.'),
+      item('Lemonade Passion','Fresh Drinks',3.50,'Lemonade passion.'),
+      item('Lemonade Classic','Fresh Drinks',3.50,'Lemonade classic.'),
+      item('Mojito Splash','Fresh Drinks',3.50,'Mojito splash.'),
       item('Cherry Cola','Fresh Drinks',3.90,'Cherry Cola.'),
-      item('U.S.A Sodas','Fresh Drinks',3.90,'Bibite USA in base alla disponibilità dello store.'),
-      item('Bibite alla Spina','Fresh Drinks',0,'Scegli formato Coca-Cola.',[COMMON.sodaSize]),
+      item('U.S.A Sodas','Fresh Drinks',3.90,'Bibite USA.'),
+      item('Coca Cola in bottiglia 33cl','Fresh Drinks',3.50,'Coca Cola in bottiglia 33cl.'),
+      item('Coca Cola alla spina Grande','Fresh Drinks',4.00,'Coca Cola alla spina grande.'),
+      item('Coca Cola alla spina Piccola','Fresh Drinks',3.00,'Coca Cola alla spina piccola.'),
+      item('Birra Franziskaner alla spina Grande','Fresh Drinks',6.00,'Birra Franziskaner alla spina grande.'),
+      item('Birra Franziskaner alla spina Piccola','Fresh Drinks',4.00,'Birra Franziskaner alla spina piccola.'),
+      item('Birra Budweiser alla spina Grande','Fresh Drinks',6.00,'Birra Budweiser alla spina grande.'),
+      item('Birra Budweiser alla spina Piccola','Fresh Drinks',3.50,'Birra Budweiser alla spina piccola.'),
+      item('Birra in bottiglia','Fresh Drinks',3.50,'Birra in bottiglia.'),
+      item('Succo di Frutta','Fresh Drinks',2.50,'Pesca, ACE, mirtillo, arancia, pera o ananas.',[COMMON.juiceFlavor]),
+      item('Acqua Ferrarelle 50cl','Fresh Drinks',1.50,'Naturale o gassata.',[COMMON.waterType]),
 
-      item('English Breakfast','Tea & Infusi',3.00,'Tè classico.'),
+      item('English Breakfast Tea','Tea & Infusi',3.00,'Tè classico.'),
       item('Rooibos','Tea & Infusi',3.00,'Tè Redbush deteinato.'),
       item('Green Tea','Tea & Infusi',3.00,'Tè verde.'),
       item('Calming','Tea & Infusi',3.00,'Infuso camomilla.'),
+      item('Supreme','Tea & Infusi',3.00,'Infuso Supreme.'),
+      item('Golden','Tea & Infusi',3.00,'Infuso arancia e curcuma.'),
 
-      item('Rice & Nutella','Yogurt',4.50,'Yogurt bianco, Nutella, rice krispies.',[COMMON.yogurtGreek]),
-      item('Granola','Yogurt',5.00,'Yogurt bianco, banane, fragole, mirtilli, muesli.',[COMMON.yogurtGreek]),
+      item('Yogurt Rice & Nutella (Yogurt Bianco)','Yogurt',4.50,'Yogurt bianco, Nutella, rice krispies.'),
+      item('Yogurt Rice & Nutella (Con Yogurt Greco)','Yogurt',6.00,'Yogurt greco, Nutella, rice krispies.'),
+      item('Yogurt Granola (Yogurt Bianco)','Yogurt',5.00,'Yogurt bianco, banane, fragole, mirtilli, muesli.'),
+      item('Yogurt Granola (Con Yogurt Greco)','Yogurt',6.00,'Yogurt greco, banane, fragole, mirtilli, muesli.'),
 
-      item('Iced Brain Fuel Coffee','Caffetteria',3.50,'Caffè solubile vaniglia francese con olio MCT e Lion’s Mane.',[COMMON.brainFuelMilk]),
-      item('Caffè','Caffetteria',1.20,'Caffè / macchiato caldo o freddo.'),
+      item('Caffè / Macchiato','Caffetteria',1.20,'Caldo o freddo.'),
       item('Caffè Doppio','Caffetteria',2.40,'Caffè doppio.'),
       item('Caffè Decaffeinato','Caffetteria',1.40,'Caffè decaffeinato.'),
-      item('Caffè Macchiato Soia/Cocco','Caffetteria',1.40,'Caffè macchiato soia o cocco.'),
-      item('Vetrino','Caffetteria',1.50,'Vetrino.'),
-      item('Vetrino Deca/Soia/Orzo','Caffetteria',1.60,'Vetrino deca, soia o orzo.'),
+      item('Caffè Macchiato Soia / Cocco','Caffetteria',1.40,'Macchiato soia o cocco.'),
+      item('Vetrino Deca / Soia / Orzo','Caffetteria',1.60,'Vetrino deca, soia o orzo.'),
+      item('Vetrino classico','Caffetteria',1.50,'Vetrino classico.'),
       item('Caffè Americano','Caffetteria',2.00,'Caffè americano.'),
-      item('Cappuccino','Caffetteria',1.60,'Cappuccino.'),
-      item('Cappuccino Ginseng','Caffetteria',2.00,'Cappuccino ginseng.'),
-      item('Latte Macchiato','Caffetteria',1.60,'Latte macchiato.'),
+      item('Cappuccino classico','Caffetteria',1.60,'Cappuccino classico.'),
+      item('Cappuccino Deca / Soia / Orzo','Caffetteria',1.70,'Cappuccino deca, soia o orzo.'),
+      item('Latte Macchiato classico','Caffetteria',1.60,'Latte macchiato classico.'),
       item('Latte Macchiato Soia','Caffetteria',1.80,'Latte macchiato soia.'),
-      item('Latte Bianco','Caffetteria',1.30,'Latte bianco.'),
-      item('Latte Soia/Cocco','Caffetteria',1.60,'Latte soia o cocco.'),
+      item('Latte Bianco classico','Caffetteria',1.30,'Latte bianco classico.'),
+      item('Latte Soia / Cocco','Caffetteria',1.60,'Latte soia o cocco.'),
+      item('Cappuccino Ginseng','Caffetteria',2.00,'Cappuccino ginseng.'),
+      item('Ginseng Grande','Caffetteria',2.00,'Ginseng grande.'),
+      item('Ginseng Piccolo','Caffetteria',1.50,'Ginseng piccolo.'),
+      item('Orzo Grande','Caffetteria',1.80,'Orzo grande.'),
+      item('Orzo Piccolo','Caffetteria',1.30,'Orzo piccolo.'),
+      item('Iced Brain Fuel Coffee','Caffetteria',3.50,'Caffè solubile vaniglia francese, olio MCT e Lion\'s Mane.',[COMMON.brainFuelMilk]),
 
-      item('Ice Cream Nutella Cappuccino','Iced Cappuccino',4.90,'Gelato fiordilatte, doppio caffè espresso, Nutella, nocciole, cioccolato fondente, topping choconocciola.'),
-      item('Iced Cappuccino','Iced Cappuccino',3.90,'Iced cappuccino.',[COMMON.coconutMilk]),
-      item('Iced Choco','Iced Cappuccino',3.90,'Iced choco.',[COMMON.coconutMilk]),
-
-      item('Pulled Pork Burger','NY Burger',14.90,'Pulled Pork BBQ Home Made, burger, formaggio, lattuga, pomodori, french fries.'),
-      item('Crispy Burger','NY Burger',14.90,'Burger, formaggio, bacon, lattuga, pomodori freschi, french fries.'),
-      item('Cheese Burger','NY Burger',13.90,'Burger, formaggio, lattuga, pomodori freschi, french fries.',[COMMON.burgerBeer]),
-      item('Veggie Burger','NY Burger',10.90,'Burger di patate, rucola, pomodori freschi, mozzarella, avocado, zucchine, ranch dressing.',[COMMON.veggieExtras])
+      item('Iced Cappuccino classico','Iced Cappuccino',3.90,'Iced cappuccino classico.'),
+      item('Iced Cappuccino con Latte di Cocco','Iced Cappuccino',4.90,'Iced cappuccino con latte di cocco.'),
+      item('Iced Choco classico','Iced Cappuccino',3.90,'Iced choco classico.'),
+      item('Iced Choco con Latte di Cocco','Iced Cappuccino',4.90,'Iced choco con latte di cocco.'),
+      item('Ice Cream Nutella Cappuccino','Iced Cappuccino',4.90,'Gelato fiordilatte, doppio espresso, Nutella, granella, riccioli di cioccolato.')
     ];
 
     function item(name, category, price, description = '', modifiers = []) {
-      return { id: slug(name), name, category, price, description, modifiers, chargeType: classifyChargeType(name, category) };
+      return { id: slug(category + '-' + name), name, category, price, description, modifiers, chargeType: classifyChargeType(name, category) };
     }
     function classifyChargeType(name, category) {
       const n = normalize(name);
-      if (SERVICE_CATEGORIES.has(category) || /pancake|waffle|cheesecake|cake|muffin|apple pie|sundae|milkshake|yogurt|granola|rice/.test(n)) return 'service';
-      if (COVER_CATEGORIES.has(category) || /burger|dog|ribs|breakfast|sandwich|toast|salad|fries|rings|poutine|schnitzel|chicken|wrap|long beach|club/.test(n)) return 'cover';
+      if (SERVICE_CATEGORIES.has(category) || /ruby|stay red|strawberr|crumble|banana split|pancake|waffle|cheesecake|cake|muffin|apple pie|sundae|milkshake|yogurt|granola|rice & nutella|angel|carrot|nutella cake|donut|cookie/.test(n)) return 'service';
+      if (COVER_CATEGORIES.has(category) || /burger|dog|ribs|breakfast|sandwich|toast|salad|fries|rings|poutine|schnitzel|chicken|wrap|bagel|club|tamago|ruben/.test(n)) return 'cover';
       return 'neutral';
     }
+
     function slug(text) { return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
     function eur(value) { return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(value || 0); }
     function nowIso() { return new Date().toISOString(); }
@@ -649,8 +703,8 @@
       categoryScroll: document.getElementById('categoryScroll'), productGrid: document.getElementById('productGrid'), noResults: document.getElementById('noResults'),
       recentStrip: document.getElementById('recentStrip'), recentList: document.getElementById('recentList'), clearRecentBtn: document.getElementById('clearRecentBtn'), currentStatus: document.getElementById('currentStatus'),
       orderTitle: document.getElementById('orderTitle'), cartCount: document.getElementById('cartCount'), orderList: document.getElementById('orderList'), emptyOrder: document.getElementById('emptyOrder'), orderTotal: document.getElementById('orderTotal'), totalValue: document.getElementById('totalValue'),
-      showComandaBtn: document.getElementById('showComandaBtn'), confirmBtn: document.getElementById('confirmBtn'), paidBtn: document.getElementById('paidBtn'), deleteOrderBtn: document.getElementById('deleteOrderBtn'), newOrderBtn: document.getElementById('newOrderBtn'),
-      historyTopBtn: document.getElementById('historyTopBtn'), clearClosedBtn: document.getElementById('clearClosedBtn'), openOrders: document.getElementById('openOrders'), historyList: document.getElementById('historyList'),
+      showComandaBtn: document.getElementById('showComandaBtn'), confirmBtn: document.getElementById('confirmBtn'), deleteOrderBtn: document.getElementById('deleteOrderBtn'), newOrderBtn: document.getElementById('newOrderBtn'),
+      historyTopBtn: document.getElementById('historyTopBtn'), historyList: document.getElementById('historyList'), clearHistoryBtn: document.getElementById('clearHistoryBtn'),
       modifierDrawer: document.getElementById('modifierDrawer'), modifierTitle: document.getElementById('modifierTitle'), modifierPrice: document.getElementById('modifierPrice'), modifierGroups: document.getElementById('modifierGroups'), modifierNote: document.getElementById('modifierNote'), addModifiedBtn: document.getElementById('addModifiedBtn'), closeModifierBtn: document.getElementById('closeModifierBtn'),
       comandaDrawer: document.getElementById('comandaDrawer'), comandaText: document.getElementById('comandaText'), closeComandaBtn: document.getElementById('closeComandaBtn'), closeComanda2Btn: document.getElementById('closeComanda2Btn'), copyComandaBtn: document.getElementById('copyComandaBtn'),
       navMenu: document.getElementById('navMenu'), navCart: document.getElementById('navCart'), navHistory: document.getElementById('navHistory'), toast: document.getElementById('toast')
@@ -663,6 +717,7 @@
       people: '',
       status: 'draft',
       items: [],
+      feeAdjustments: { cover: 0, service: 0 },
       history: safeParse('wo_history', []),
       recent: safeParse('wo_recent', []),
       modifierProduct: null,
@@ -686,10 +741,9 @@
       els.newOrderBtn.addEventListener('click', newOrder);
       els.showComandaBtn.addEventListener('click', showComanda);
       els.confirmBtn.addEventListener('click', confirmOrder);
-      els.paidBtn.addEventListener('click', closeOrder);
       els.deleteOrderBtn.addEventListener('click', deleteCurrentOrder);
       els.historyTopBtn.addEventListener('click', () => setMobileView('history'));
-      els.clearClosedBtn.addEventListener('click', clearClosedOrders);
+      els.clearHistoryBtn.addEventListener('click', clearHistory);
       els.clearRecentBtn.addEventListener('click', clearRecents);
       els.closeModifierBtn.addEventListener('click', closeModifier);
       els.addModifiedBtn.addEventListener('click', addModifiedItem);
@@ -807,7 +861,10 @@
       els.modifierNote.value = existingLine?.note || '';
       els.modifierGroups.innerHTML = '';
       product.modifiers.forEach(group => {
-        const box = document.createElement('div'); box.className = 'option-group';
+        const box = document.createElement('div');
+        box.className = 'option-group';
+        box.dataset.groupId = group.id;
+        box.dataset.required = group.required ? '1' : '0';
         box.innerHTML = `<p class="option-title">${escapeHtml(group.title)} ${group.required ? '<small>obbligatorio</small>' : '<small>facoltativo</small>'}</p>`;
         const optList = document.createElement('div'); optList.className = 'option-list';
         const selectedFromLine = existingLine?.modifiers?.filter(m => m.groupId === group.id).map(m => m.name) || [];
@@ -846,16 +903,34 @@
         state.modifierSelection[group.id] = [];
         if (!was) { state.modifierSelection[group.id] = [opt]; chip.classList.add('selected'); }
       }
+      updateRequiredHighlight(group.id, group.required && !(state.modifierSelection[group.id] || []).length);
+    }
+
+    function updateRequiredHighlight(groupId, isMissing) {
+      const box = els.modifierGroups.querySelector(`[data-group-id="${CSS.escape(groupId)}"]`);
+      if (!box) return;
+      box.classList.toggle('required-missing', !!isMissing);
+    }
+
+    function highlightMissingRequiredGroups(product) {
+      let firstMissing = null;
+      product.modifiers.forEach(group => {
+        const missing = group.required && !(state.modifierSelection[group.id] || []).length;
+        updateRequiredHighlight(group.id, missing);
+        if (missing && !firstMissing) {
+          firstMissing = els.modifierGroups.querySelector(`[data-group-id="${CSS.escape(group.id)}"]`);
+        }
+      });
+      if (firstMissing) {
+        firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return !!firstMissing;
     }
 
     function addModifiedItem() {
       const product = state.modifierProduct;
       if (!product) return;
-      for (const group of product.modifiers) {
-        if (group.required && !(state.modifierSelection[group.id] || []).length) {
-          toast(`Scegli: ${group.title}`); return;
-        }
-      }
+      if (highlightMissingRequiredGroups(product)) return;
       const mods = [];
       product.modifiers.forEach(group => {
         (state.modifierSelection[group.id] || []).forEach(opt => mods.push({ groupId: group.id, groupTitle: group.title, name: opt.name, price: opt.price || 0 }));
@@ -892,18 +967,19 @@
       els.currentStatus.className = 'status-pill ' + statusClass(state.status);
       els.currentStatus.textContent = statusLabel(state.status);
       const count = state.items.reduce((s, x) => s + x.qty, 0);
-      const fees = autoFees();
+      const fees = autoFees(false);
+      const displayFees = state.items.length ? autoFees(true) : [];
       const feeCount = fees.reduce((s, x) => s + x.qty, 0);
-      els.cartCount.textContent = feeCount ? `${count} prodotti + ${feeCount} auto` : `${count} articoli`;
+      els.cartCount.textContent = feeCount ? `${count} prodotti + ${feeCount} cop/serv` : `${count} articoli`;
       els.orderList.innerHTML = '';
       state.items.forEach(line => els.orderList.appendChild(orderRow(line)));
-      fees.forEach(fee => els.orderList.appendChild(autoFeeRow(fee)));
+      displayFees.forEach(fee => els.orderList.appendChild(autoFeeRow(fee)));
       els.emptyOrder.classList.toggle('hidden', state.items.length > 0);
       els.orderTotal.classList.toggle('hidden', state.items.length === 0);
       els.totalValue.textContent = eur(total());
-      els.confirmBtn.textContent = state.status === 'confirmed' ? 'Già confermato' : state.status === 'modified' ? 'Aggiorna comanda' : 'Conferma comanda';
-      els.confirmBtn.disabled = state.status === 'confirmed' && state.items.length > 0;
-      els.confirmBtn.style.opacity = els.confirmBtn.disabled ? '.55' : '1';
+      els.confirmBtn.textContent = state.status === 'confirmed' || state.status === 'modified' ? 'Salva nello storico' : 'Conferma comanda';
+      els.confirmBtn.disabled = false;
+      els.confirmBtn.style.opacity = '1';
     }
 
     function orderRow(line) {
@@ -932,16 +1008,32 @@
 
     function autoFeeRow(fee) {
       const row = document.createElement('div');
-      row.className = 'order-row auto-fee';
+      row.className = 'order-row auto-fee' + (fee.qty === 0 ? ' fee-zero' : '');
+      const kindLabel = fee.type === 'cover' ? 'salati' : 'dolci';
+      const manualChip = fee.adjustment !== 0
+        ? `<span class="fee-chip manual">Correzione ${fee.adjustment > 0 ? '+' : ''}${fee.adjustment}</span>`
+        : '';
       row.innerHTML = `
         <div class="row-main">
           <div>
             <div class="row-title">${fee.qty}x ${escapeHtml(fee.name)} <span class="auto-label">AUTO</span></div>
-            <div class="row-sub">Calcolato da persone/prodotti: ${escapeHtml(fee.reason)}</div>
+            <div class="fee-meta">
+              <span class="fee-chip warn">Base ${fee.autoQty}</span>
+              ${manualChip}
+              <span class="fee-chip">${escapeHtml(fee.reason)}</span>
+            </div>
           </div>
           <div class="row-price">${eur(fee.price * fee.qty)}</div>
         </div>
+        <div class="row-actions fee-actions">
+          <button type="button" data-act="minus">−</button>
+          <button type="button" data-act="plus">+</button>
+          <button class="reset" type="button" data-act="reset">Reset</button>
+        </div>
       `;
+      row.querySelector('[data-act="minus"]').addEventListener('click', () => adjustFee(fee.type, -1));
+      row.querySelector('[data-act="plus"]').addEventListener('click', () => adjustFee(fee.type, 1));
+      row.querySelector('[data-act="reset"]').addEventListener('click', () => resetFee(fee.type));
       return row;
     }
 
@@ -957,9 +1049,10 @@
       if (!line) return;
       line.qty += delta;
       if (line.qty <= 0) state.items = state.items.filter(x => x.lineId !== lineId);
+      if (!state.items.length) state.feeAdjustments = { cover: 0, service: 0 };
       markModifiedIfNeeded(); saveCurrentOrder(); renderOrder(); renderHistory();
     }
-    function removeLine(lineId) { state.items = state.items.filter(x => x.lineId !== lineId); markModifiedIfNeeded(); saveCurrentOrder(); renderOrder(); renderHistory(); }
+    function removeLine(lineId) { state.items = state.items.filter(x => x.lineId !== lineId); if (!state.items.length) state.feeAdjustments = { cover: 0, service: 0 }; markModifiedIfNeeded(); saveCurrentOrder(); renderOrder(); renderHistory(); }
     function editLine(line) { const product = MENU.find(p => p.id === line.productId); if (product?.modifiers?.length) openModifier(product, line); else openQuickNote(line); }
 
     function openQuickNote(line) {
@@ -983,7 +1076,7 @@
       return Number.isFinite(n) && n > 0 ? n : 0;
     }
 
-    function autoFees() {
+    function feeBaseCounts() {
       const raw = state.items.reduce((acc, line) => {
         const type = line.chargeType || (MENU.find(p => p.id === line.productId)?.chargeType) || classifyChargeType(line.name, '');
         if (type === 'cover') acc.cover += line.qty;
@@ -996,10 +1089,41 @@
       const coverQty = Math.min(raw.cover, effectivePeople);
       const serviceSlots = Math.max(effectivePeople - coverQty, 0);
       const serviceQty = Math.min(raw.service, serviceSlots);
-      const fees = [];
-      if (coverQty > 0) fees.push({ type: 'cover', name: AUTO_FEES.cover.name, qty: coverQty, price: AUTO_FEES.cover.price, reason: people ? `${people} persone, ${raw.cover} salati` : `${raw.cover} salati` });
-      if (serviceQty > 0) fees.push({ type: 'service', name: AUTO_FEES.service.name, qty: serviceQty, price: AUTO_FEES.service.price, reason: people ? `${people} persone, ${raw.service} dolci` : `${raw.service} dolci` });
-      return fees;
+      return { raw, people, effectivePeople, coverQty, serviceQty };
+    }
+
+    function cleanFeeAdjustments() {
+      if (!state.feeAdjustments) state.feeAdjustments = { cover: 0, service: 0 };
+      state.feeAdjustments.cover = parseInt(state.feeAdjustments.cover || 0, 10) || 0;
+      state.feeAdjustments.service = parseInt(state.feeAdjustments.service || 0, 10) || 0;
+    }
+
+    function autoFees(includeZero = false) {
+      cleanFeeAdjustments();
+      const base = feeBaseCounts();
+      const feeData = [
+        { type: 'cover', name: AUTO_FEES.cover.name, price: AUTO_FEES.cover.price, autoQty: base.coverQty, adjustment: state.feeAdjustments.cover, reason: base.people ? `${base.raw.cover} salati · ${base.people} persone` : `${base.raw.cover} salati` },
+        { type: 'service', name: AUTO_FEES.service.name, price: AUTO_FEES.service.price, autoQty: base.serviceQty, adjustment: state.feeAdjustments.service, reason: base.people ? `${base.raw.service} dolci · ${base.people} persone` : `${base.raw.service} dolci` }
+      ].map(fee => ({ ...fee, qty: Math.max(0, fee.autoQty + fee.adjustment) }));
+      return feeData.filter(fee => includeZero || fee.qty > 0 || fee.adjustment !== 0);
+    }
+
+    function adjustFee(type, delta) {
+      cleanFeeAdjustments();
+      const base = feeBaseCounts();
+      const autoQty = type === 'cover' ? base.coverQty : base.serviceQty;
+      const current = state.feeAdjustments[type] || 0;
+      const next = Math.max(-autoQty, Math.min(99, current + delta));
+      state.feeAdjustments[type] = next;
+      markModifiedIfNeeded(); saveCurrentOrder(); renderOrder(); renderHistory();
+      toast(type === 'cover' ? 'Coperto modificato' : 'Servizio modificato');
+    }
+
+    function resetFee(type) {
+      cleanFeeAdjustments();
+      state.feeAdjustments[type] = 0;
+      markModifiedIfNeeded(); saveCurrentOrder(); renderOrder(); renderHistory();
+      toast('Regolazione azzerata');
     }
 
     function total() { return state.items.reduce((s, x) => s + x.unitPrice * x.qty, 0) + autoFees().reduce((s, x) => s + x.price * x.qty, 0); }
@@ -1016,16 +1140,37 @@
       persist(); if (show) toast('Salvato');
     }
 
-    function toOrder() { return { id: state.orderId, table: state.table, people: state.people, status: state.status, items: clone(state.items), total: total(), createdAt: state.history.find(o => o.id === state.orderId)?.createdAt || nowIso(), updatedAt: nowIso() }; }
+    function toOrder() { return { id: state.orderId, table: state.table, people: state.people, status: state.status, items: clone(state.items), feeAdjustments: clone(state.feeAdjustments || { cover: 0, service: 0 }), total: total(), createdAt: state.history.find(o => o.id === state.orderId)?.createdAt || nowIso(), updatedAt: nowIso() }; }
     function persist() { localStorage.setItem('wo_history', JSON.stringify(state.history)); }
-    function loadOrder(order) { state.orderId = order.id; state.table = order.table || ''; state.people = order.people || ''; state.status = order.status || 'draft'; state.items = clone(order.items || []); els.tableInput.value = state.table; els.peopleInput.value = state.people || ''; setMobileView('cart'); renderOrder(); renderHistory(); toast(`Tavolo ${state.table || '?'} aperto`); }
+    function loadOrder(order) { state.orderId = order.id; state.table = order.table || ''; state.people = order.people || ''; state.status = order.status || 'draft'; state.items = clone(order.items || []); state.feeAdjustments = clone(order.feeAdjustments || { cover: 0, service: 0 }); els.tableInput.value = state.table; els.peopleInput.value = state.people || ''; setMobileView('cart'); renderOrder(); renderHistory(); toast(`Tavolo ${state.table || '?'} aperto`); }
 
     function markModifiedIfNeeded() { if (state.status === 'confirmed') state.status = 'modified'; }
+
+    function clearCurrentAfterConfirm() {
+      state.orderId = null;
+      state.table = '';
+      state.people = '';
+      state.status = 'draft';
+      state.items = [];
+      state.feeAdjustments = { cover: 0, service: 0 };
+      els.tableInput.value = '';
+      els.peopleInput.value = '';
+      els.searchInput.value = '';
+      setMobileView('menu');
+      renderOrder();
+      renderProducts();
+      setTimeout(() => els.tableInput.focus(), 80);
+    }
 
     function confirmOrder() {
       if (!state.table) { toast('Inserisci il tavolo'); els.tableInput.focus(); return; }
       if (!state.items.length) { toast('Ordine vuoto'); return; }
-      state.status = 'confirmed'; saveCurrentOrder(true); renderOrder(); renderHistory(); showComanda();
+      const savedTable = state.table || '?';
+      state.status = 'confirmed';
+      saveCurrentOrder(false);
+      renderHistory();
+      clearCurrentAfterConfirm();
+      toast(`Comanda tavolo ${savedTable} salvata nello storico`);
     }
 
     function closeOrder() {
@@ -1042,18 +1187,27 @@
     }
 
     function newOrder(ask = true) {
-      if (ask && state.items.length && state.status !== 'closed' && !confirm('Creare una nuova comanda? Quella attuale resta nello storico se salvata.')) return;
-      state.orderId = null; state.table = ''; state.people = ''; state.status = 'draft'; state.items = []; els.tableInput.value = ''; els.peopleInput.value = ''; els.searchInput.value = ''; setMobileView('menu'); renderOrder(); renderProducts();
+      if (ask && state.items.length && !confirm('Azzerare la comanda attuale e ricominciare?')) return;
+      state.orderId = null; state.table = ''; state.people = ''; state.status = 'draft'; state.items = []; state.feeAdjustments = { cover: 0, service: 0 }; els.tableInput.value = ''; els.peopleInput.value = ''; els.searchInput.value = ''; setMobileView('menu'); renderOrder(); renderProducts();
       setTimeout(() => els.tableInput.focus(), 100);
     }
 
+    function clearHistory() {
+      const confirmedCount = state.history.filter(o => o.status !== 'draft').length;
+      if (!confirmedCount) { toast('Storico già vuoto'); return; }
+      if (!confirm(`Svuotare tutto lo storico? Verranno eliminate ${confirmedCount} comande confermate.`)) return;
+      state.history = state.history.filter(o => o.status === 'draft' && o.id === state.orderId);
+      persist();
+      renderHistory();
+      toast('Storico svuotato');
+    }
+
     function renderHistory() {
-      const open = state.history.filter(o => o.status !== 'closed');
-      const closed = state.history.filter(o => o.status === 'closed');
-      els.openOrders.innerHTML = open.length ? '' : '<div class="empty">Nessun tavolo aperto.</div>';
-      open.forEach(o => els.openOrders.appendChild(historyCard(o, true)));
-      els.historyList.innerHTML = closed.length ? '' : '<div class="empty">Nessun ordine chiuso.</div>';
-      closed.forEach(o => els.historyList.appendChild(historyCard(o, false)));
+      const orders = state.history
+        .filter(o => o.status !== 'draft')
+        .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+      els.historyList.innerHTML = orders.length ? '' : '<div class="empty">Nessuna comanda confermata. Premi “Conferma comanda” per salvarla qui.</div>';
+      orders.forEach(o => els.historyList.appendChild(historyCard(o, false)));
     }
 
     function historyCard(order, isOpen) {
@@ -1069,23 +1223,21 @@
         </div>
         <div class="row-sub">${escapeHtml(summary(order))}</div>
         <div class="history-actions">
-          <button class="blue" type="button" data-act="open">Apri</button>
+          <button class="blue" type="button" data-act="open">Modifica</button>
           <button type="button" data-act="view">Comanda</button>
           <button class="danger" type="button" data-act="delete">Elimina</button>
         </div>
       `;
       card.querySelector('[data-act="open"]').addEventListener('click', () => loadOrder(order));
-      card.querySelector('[data-act="view"]').addEventListener('click', () => { const current = toOrderSafely(); state.orderId = order.id; state.table = order.table; state.people = order.people || ''; state.status = order.status; state.items = clone(order.items || []); showComanda(); if (current) restoreOrder(current); renderOrder(); });
+      card.querySelector('[data-act="view"]').addEventListener('click', () => { const current = toOrderSafely(); state.orderId = order.id; state.table = order.table; state.people = order.people || ''; state.status = order.status; state.items = clone(order.items || []); state.feeAdjustments = clone(order.feeAdjustments || { cover: 0, service: 0 }); showComanda(); if (current) restoreOrder(current); renderOrder(); });
       card.querySelector('[data-act="delete"]').addEventListener('click', () => deleteHistoryOrder(order.id));
       return card;
     }
 
-    function toOrderSafely() { return { orderId: state.orderId, table: state.table, people: state.people, status: state.status, items: clone(state.items) }; }
-    function restoreOrder(s) { state.orderId = s.orderId; state.table = s.table; state.people = s.people || ''; state.status = s.status; state.items = s.items; els.tableInput.value = state.table || ''; els.peopleInput.value = state.people || ''; }
+    function toOrderSafely() { return { orderId: state.orderId, table: state.table, people: state.people, status: state.status, items: clone(state.items), feeAdjustments: clone(state.feeAdjustments || { cover: 0, service: 0 }) }; }
+    function restoreOrder(s) { state.orderId = s.orderId; state.table = s.table; state.people = s.people || ''; state.status = s.status; state.items = s.items; state.feeAdjustments = clone(s.feeAdjustments || { cover: 0, service: 0 }); els.tableInput.value = state.table || ''; els.peopleInput.value = state.people || ''; }
     function summary(order) { return (order.items || []).slice(0, 5).map(x => `${x.qty}× ${x.name}`).join('\n') + ((order.items || []).length > 5 ? '\n…' : ''); }
     function deleteHistoryOrder(id) { if (!confirm('Eliminare definitivamente questo ordine?')) return; state.history = state.history.filter(o => o.id !== id); if (state.orderId === id) newOrder(false); persist(); renderHistory(); toast('Eliminato'); }
-    function clearClosedOrders() { if (!confirm('Eliminare tutti gli ordini chiusi?')) return; state.history = state.history.filter(o => o.status !== 'closed'); persist(); renderHistory(); toast('Storico chiusi pulito'); }
-
     function showComanda() {
       if (!state.items.length) { toast('Ordine vuoto'); return; }
       els.comandaText.textContent = buildComandaText();
@@ -1112,7 +1264,7 @@
       const fees = autoFees();
       if (fees.length) {
         lines.push('--------------------');
-        lines.push('AUTOMATICI');
+        lines.push('COPERTO / SERVIZIO');
         fees.forEach(fee => lines.push(`${fee.qty}x ${fee.name}`));
       }
       lines.push('--------------------');
@@ -1121,8 +1273,8 @@
     }
 
     function normalize(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
-    function iconFor(cat) { if (cat.includes('Burger')) return '🍔'; if (cat.includes('Sodas') || cat.includes('Caffetteria') || cat.includes('Milkshake') || cat.includes('Iced')) return '🥤'; if (cat.includes('Pancake')) return '🥞'; if (cat.includes('Sweet') || cat.includes('Cakes') || cat.includes('Yogurt')) return '🍰'; if (cat.includes('Salad')) return '🥗'; if (cat.includes('Sides')) return '🍟'; if (cat.includes('Breakfast') || cat.includes('Brunch')) return '🍳'; if (cat.includes('Sandwich') || cat.includes('Bagel') || cat.includes('Hot Dog')) return '🥪'; if (cat.includes('Alcolico')) return '🍺'; return '🍽️'; }
-    function shortCat(cat) { return cat.replace('Caffetteria, tè e fresh drinks','Caffetteria').replace('Sodas / Acqua / Succhi','Sodas').replace('Milkshake & Smoothies','Milkshake').replace('Iced Cappuccino / Choco','Iced').replace('Pancake & Waffle','Pancake').replace('Cakes & Pies','Cakes'); }
+    function iconFor(cat) { if (cat.includes('Burger')) return '🍔'; if (cat.includes('Fresh') || cat.includes('Caffetteria') || cat.includes('Milkshake') || cat.includes('Iced') || cat.includes('Tea')) return '🥤'; if (cat.includes('Pancake')) return '🥞'; if (cat.includes('Sweet') || cat.includes('Cake') || cat.includes('Yogurt') || cat.includes('Novità')) return '🍰'; if (cat.includes('Salad')) return '🥗'; if (cat.includes('Sides')) return '🍟'; if (cat.includes('Breakfast') || cat.includes('Brunch')) return '🍳'; if (cat.includes('Sandwich') || cat.includes('Hot Dog')) return '🥪'; return '🍽️'; }
+    function shortCat(cat) { return cat.replace('Novità & Speciali','Novità').replace('Pancake & Waffle','Pancake').replace('Cake & Cheesecake','Cakes').replace('Milkshake & Sundae','Milkshake').replace('Fresh Drinks','Drinks').replace('Tea & Infusi','Tea').replace('Iced Cappuccino','Iced').replace('All Days Brunch','Brunch').replace('American Breakfast','American').replace('Club & Sandwich','Club').replace('Sides & Salad','Sides/Salad').replace('NY Burgers','Burger'); }
     function statusClass(status) { return status === 'confirmed' ? 'status-confirmed' : status === 'modified' ? 'status-modified' : status === 'closed' ? 'status-closed' : 'status-draft'; }
     function statusLabel(status) { return status === 'confirmed' ? '🟢 Confermato' : status === 'modified' ? '🟠 Modificato' : status === 'closed' ? '⚫ Chiuso' : '🟡 In presa'; }
     function formatDate(iso) { if (!iso) return ''; const d = new Date(iso); return d.toLocaleString('it-IT', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }); }
