@@ -1,11 +1,12 @@
-const CACHE_NAME = 'white-order-pwa-v4-auto-fees-recents';
+const CACHE_NAME = 'white-order-pwa-v8-6-clear-history';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   './sw.js',
   './assets/icon-192.png',
-  './assets/icon-512.png'
+  './assets/icon-512.png',
+  './assets/apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
